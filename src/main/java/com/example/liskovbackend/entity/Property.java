@@ -1,5 +1,6 @@
 package com.example.liskovbackend.entity;
 
+import com.example.liskovbackend.enums.PropertyType;
 import jakarta.persistence.*;
 import lombok.*;
 

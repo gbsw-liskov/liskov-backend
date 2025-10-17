@@ -27,6 +27,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testCompileOnly("org.projectlombok:lombok:1.18.42")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.42")
+    implementation 'com.mysql:mysql-connector-j:8.0.33'
 }
 
 tasks.named('test') {
