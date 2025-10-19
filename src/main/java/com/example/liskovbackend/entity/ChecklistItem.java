@@ -22,9 +22,6 @@ public class ChecklistItem {
 
     private String content;
 
-    @Column(name = "is_required")
-    private Boolean isRequired = true;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Severity severity = Severity.NONE;
