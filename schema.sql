@@ -52,7 +52,6 @@ CREATE TABLE checklist_items (
     checklist_id BIGINT NOT NULL,
     category VARCHAR(50) NOT NULL,      -- 전기 / 수도 / 창문 등
     content VARCHAR(255) NOT NULL,      -- 점검 내용 (예: 콘센트 이상 여부)
-    is_required BOOLEAN DEFAULT TRUE,   -- 필수 점검 여부
     severity ENUM('NONE', 'NORMAL', 'WARNING', 'DANGER') NOT NULL,
     memo VARCHAR(255),                  -- 사용자 메모
     photo_url VARCHAR(255),             -- 하자 사진 (S3 등 URL)
