@@ -88,4 +88,18 @@ public class ChecklistService {
 
         return response;
     }
+
+    public List<AllChecklistGetResponse> getAllChecklist() {
+        List<Checklist> allChecklists = checklistRepository.findAll();
+        List<AllChecklistGetResponse> responses = allChecklists.stream()
+                .map(checklist -> AllChecklistGetResponse.builder()
+                        .checklistId(checklist.getId())
+                        .propertyId(checklist.getProperty().getId())
+                        .createdAt(checklist.getCreatedAt())
+                        .itemCount(checklist.getItems().size())
+                        .build()
+                ).collect(Collectors.toList());
+
+        return responses;
+    }
 }

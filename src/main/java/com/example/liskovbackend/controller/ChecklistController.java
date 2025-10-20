@@ -1,6 +1,7 @@
 package com.example.liskovbackend.controller;
 
 import com.example.liskovbackend.common.ApiResponse;
+import com.example.liskovbackend.dto.AllChecklistGetResponse;
 import com.example.liskovbackend.dto.ChecklistGetResponse;
 import com.example.liskovbackend.dto.ChecklistSaveRequest;
 import com.example.liskovbackend.dto.ChecklistSaveResponse;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/checklist")
@@ -31,6 +34,12 @@ public class ChecklistController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ChecklistGetResponse>> getChecklistById(@PathVariable Long id){
         ChecklistGetResponse response = checklistService.getChecklistById(id);
+        return ApiResponse.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<AllChecklistGetResponse>>> getAllChecklist(){
+        List<AllChecklistGetResponse> response = checklistService.getAllChecklist();
         return ApiResponse.ok(response);
     }
 }
