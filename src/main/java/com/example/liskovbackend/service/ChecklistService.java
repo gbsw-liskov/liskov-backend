@@ -1,8 +1,6 @@
 package com.example.liskovbackend.service;
 
-import com.example.liskovbackend.dto.ChecklistItemsSaveRequest;
-import com.example.liskovbackend.dto.ChecklistSaveRequest;
-import com.example.liskovbackend.dto.ChecklistSaveResponse;
+import com.example.liskovbackend.dto.*;
 import com.example.liskovbackend.entity.Checklist;
 import com.example.liskovbackend.entity.ChecklistItem;
 import com.example.liskovbackend.entity.Property;
@@ -65,5 +63,29 @@ public class ChecklistService {
                 .itemCount(savedChecklistItems.size())
                 .createdAt(savedChecklist.getCreatedAt())
                 .build();
+    }
+
+    public ChecklistGetResponse getChecklistById(Long id) {
+        Checklist checklist = checklistRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
+
+        List<ChecklistItem> checklistItems = checklist.getItems();
+
+        List<ChecklistItemGetResponse> items = checklistItems.stream()
+                .map(item -> ChecklistItemGetResponse.builder()
+                        .itemId(item.getId())
+                        .content(item.getContent())
+                        .severity(item.getSeverity())
+                        .memo(item.getMemo()).build()
+                ).collect(Collectors.toList());
+
+
+        ChecklistGetResponse response = ChecklistGetResponse.builder()
+                .checklistId(checklist.getId())
+                .propertyId(checklist.getProperty().getId())
+                .items(items)
+                .build();
+
+        return response;
     }
 }

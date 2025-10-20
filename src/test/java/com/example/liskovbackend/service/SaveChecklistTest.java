@@ -22,7 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-class ChecklistServiceTest {
+class SaveChecklistTest {
 
     // Mock Repository 사용
     @Mock
