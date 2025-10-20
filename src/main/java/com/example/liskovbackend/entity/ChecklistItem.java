@@ -19,12 +19,12 @@ public class ChecklistItem {
     @JoinColumn(name = "checklist_id", nullable = false)
     private Checklist checklist;
 
-    private String category;
+//    private String category;
 
     private String content;
 
-    @Column(name = "is_required")
-    private Boolean isRequired = true;
+//    @Column(name = "is_required")
+//    private Boolean isRequired = true;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

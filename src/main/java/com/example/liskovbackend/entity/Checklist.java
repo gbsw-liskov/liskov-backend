@@ -19,8 +19,8 @@ public class Checklist {
     @JoinColumn(name = "property_id", nullable = false)
     private Property property;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+//    @Column(columnDefinition = "TEXT")
+//    private String description;
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
