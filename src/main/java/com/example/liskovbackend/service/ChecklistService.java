@@ -8,10 +8,13 @@ import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.ChecklistItemRepository;
 import com.example.liskovbackend.repository.ChecklistRepository;
 import com.example.liskovbackend.repository.PropertyRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -109,5 +112,48 @@ public class ChecklistService {
 
         checklist.setIsDeleted(true);
         checklistRepository.save(checklist);
+    }
+
+    @Transactional
+    public ChecklistUpdateResponse updateChecklist(Long id, List<ChecklistUpdateRequest> request) {
+        Checklist checklist = checklistRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
+
+        //수정된 items의 개수를 반환하기 위해 사용
+        long changedCount = 0;
+
+        long updatedCount = request.stream()
+                .map(req -> {
+                    //itemId로 ChecklistItem을 find한 후 item의 checklistId와 위에서 find한 Checklist의 id가 일치하는지 확인
+                    ChecklistItem item = checklistItemRepository.findById(req.getItemId())
+                            .filter(i -> i.getChecklist().getId().equals(id))
+                            .orElseThrow(() -> new ResourceNotFoundException("해당 체크리스트에 항목이 존재하지 않습니다."));
+
+                    //수정 되었는지를 확인하기 위함
+                    boolean changed = false;
+
+                    //memo 수정
+                    if (!Objects.equals(item.getMemo(), req.getMemo())) {
+                        item.setMemo(req.getMemo());
+                        changed = true;
+                    }
+
+                    //severity 수정
+                    if (!Objects.equals(item.getSeverity(), req.getSeverity())) {
+                        item.setSeverity(req.getSeverity());
+                        changed = true;
+                    }
+
+                    return changed;
+                })
+                .filter(Boolean::booleanValue)
+                .count();
+
+        return ChecklistUpdateResponse.builder()
+                .checklistId(checklist.getId())
+                .propertyId(checklist.getProperty().getId())
+                .updatedItemCount(request.size())
+                .updatedAt(LocalDateTime.now())
+                .build();
     }
 }
