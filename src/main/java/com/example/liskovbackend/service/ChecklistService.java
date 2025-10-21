@@ -102,4 +102,12 @@ public class ChecklistService {
 
         return responses;
     }
+
+    public void deleteChecklist(Long id) {
+        Checklist checklist = checklistRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
+
+        checklist.setIsDeleted(true);
+        checklistRepository.save(checklist);
+    }
 }

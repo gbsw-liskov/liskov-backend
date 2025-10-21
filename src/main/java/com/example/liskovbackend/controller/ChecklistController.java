@@ -8,6 +8,7 @@ import com.example.liskovbackend.dto.ChecklistSaveResponse;
 import com.example.liskovbackend.service.ChecklistService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,21 +26,31 @@ public class ChecklistController {
 //        return ApiResponse.ok(response);
 //    }
 
+    //체크리스트 저장
     @PostMapping
     public ResponseEntity<ApiResponse<ChecklistSaveResponse>> saveChecklist(@Valid @RequestBody ChecklistSaveRequest request){
         ChecklistSaveResponse response = checklistService.saveChecklist(request);
         return ApiResponse.ok(response);
     }
 
+    //체크리스트 개별 조회
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ChecklistGetResponse>> getChecklistById(@PathVariable Long id){
         ChecklistGetResponse response = checklistService.getChecklistById(id);
         return ApiResponse.ok(response);
     }
 
+    //체크리스트 전체 조회
     @GetMapping
     public ResponseEntity<ApiResponse<List<AllChecklistGetResponse>>> getAllChecklist(){
         List<AllChecklistGetResponse> response = checklistService.getAllChecklist();
         return ApiResponse.ok(response);
+    }
+
+    //체크리스트 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteChecklist(@PathVariable Long id){
+        checklistService.deleteChecklist(id);
+        return ApiResponse.noContent();
     }
 }

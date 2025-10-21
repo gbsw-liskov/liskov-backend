@@ -1,13 +1,10 @@
 package com.example.liskovbackend.service;
 
 import com.example.liskovbackend.dto.AllChecklistGetResponse;
-import com.example.liskovbackend.dto.ChecklistGetResponse;
-import com.example.liskovbackend.dto.ChecklistItemGetResponse;
 import com.example.liskovbackend.entity.Checklist;
 import com.example.liskovbackend.entity.ChecklistItem;
 import com.example.liskovbackend.entity.Property;
 import com.example.liskovbackend.enums.Severity;
-import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.ChecklistRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +15,6 @@ import org.mockito.MockitoAnnotations;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
