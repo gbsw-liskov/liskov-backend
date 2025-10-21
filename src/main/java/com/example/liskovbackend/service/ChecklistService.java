@@ -8,9 +8,9 @@ import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.ChecklistItemRepository;
 import com.example.liskovbackend.repository.ChecklistRepository;
 import com.example.liskovbackend.repository.PropertyRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +25,7 @@ public class ChecklistService {
     private final PropertyRepository propertyRepository;
     private final ChecklistItemRepository checklistItemRepository;
 
+    @Transactional
     public ChecklistSaveResponse saveChecklist(ChecklistSaveRequest request){
 
         //매물 찾기 (request.getPropertyId())
@@ -68,6 +69,7 @@ public class ChecklistService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public ChecklistGetResponse getChecklistById(Long id) {
         Checklist checklist = checklistRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
@@ -92,6 +94,7 @@ public class ChecklistService {
         return response;
     }
 
+    @Transactional(readOnly = true)
     public List<AllChecklistGetResponse> getAllChecklist() {
         List<Checklist> allChecklists = checklistRepository.findAll();
         List<AllChecklistGetResponse> responses = allChecklists.stream()
@@ -106,12 +109,12 @@ public class ChecklistService {
         return responses;
     }
 
+    @Transactional
     public void deleteChecklist(Long id) {
         Checklist checklist = checklistRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
 
         checklist.setIsDeleted(true);
-        checklistRepository.save(checklist);
     }
 
     @Transactional
