@@ -4,7 +4,7 @@ import com.example.liskovbackend.dto.PropertyCreateRequestDto;
 import com.example.liskovbackend.dto.PropertyDetailDto;
 import com.example.liskovbackend.dto.PropertySummaryDto;
 import com.example.liskovbackend.entity.Property;
-import com.example.liskovbackend.exception.ResourceNotFoundException;
+import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class PropertyService {
     @Transactional(readOnly = true)
     public PropertyDetailDto findPropertyById(Long id) {
         var property = propertyRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Property not found with id: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
 
         return PropertyDetailDto.from(property);
     }

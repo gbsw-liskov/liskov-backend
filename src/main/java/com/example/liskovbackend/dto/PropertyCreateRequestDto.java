@@ -1,6 +1,6 @@
 package com.example.liskovbackend.dto;
 
-import com.example.liskovbackend.entity.PropertyType;
+import com.example.liskovbackend.enums.PropertyType;
 import lombok.*;
 
 import java.math.BigDecimal;
