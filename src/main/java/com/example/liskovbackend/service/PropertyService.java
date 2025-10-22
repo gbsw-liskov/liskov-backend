@@ -32,7 +32,7 @@ public class PropertyService {
     @Transactional(readOnly = true)
     public PropertyDetailDto findPropertyById(Long id) {
         var property = propertyRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Property not found with id: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
 
         return PropertyDetailDto.from(property);
     }

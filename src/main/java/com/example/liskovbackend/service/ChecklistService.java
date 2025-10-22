@@ -18,8 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,13 +36,8 @@ public class ChecklistService {
     public ChecklistSaveResponse saveChecklist(ChecklistSaveRequest request){
 
         //매물 찾기 (request.getPropertyId())
-        Optional<Property> optionalProperty = propertyRepository.findById(request.getPropertyId());
-
-        if(optionalProperty.isEmpty()){
-            throw new ResourceNotFoundException("매물을 찾을 수 없습니다. ");
-        }
-
-        Property property = optionalProperty.get();
+        Property property = propertyRepository.findById(request.getPropertyId())
+            .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
 
         if(property.getChecklists() != null){
             throw new ResourceAlreadyExistsException("매물에 대한 체크리스트가 이미 존재합니다.");
@@ -98,30 +95,26 @@ public class ChecklistService {
                         .memo(item.getMemo()).build()
                 ).collect(Collectors.toList());
 
-
-        ChecklistGetResponse response = ChecklistGetResponse.builder()
-                .checklistId(checklist.getId())
-                .propertyId(checklist.getProperty().getId())
-                .items(items)
-                .build();
-
-        return response;
+        return ChecklistGetResponse.builder()
+            .checklistId(checklist.getId())
+            .propertyId(checklist.getProperty().getId())
+            .items(items)
+            .build();
     }
 
     @Transactional(readOnly = true)
     public List<AllChecklistGetResponse> getAllChecklist() {
         List<Checklist> allChecklists = checklistRepository.findAll();
-        List<AllChecklistGetResponse> responses = allChecklists.stream()
-                .filter(checklist -> !checklist.getIsDeleted())
-                .map(checklist -> AllChecklistGetResponse.builder()
-                        .checklistId(checklist.getId())
-                        .propertyId(checklist.getProperty().getId())
-                        .createdAt(checklist.getCreatedAt())
-                        .itemCount(checklist.getItems().size())
-                        .build()
-                ).collect(Collectors.toList());
 
-        return responses;
+        return allChecklists.stream()
+            .filter(checklist -> !checklist.getIsDeleted())
+            .map(checklist -> AllChecklistGetResponse.builder()
+                .checklistId(checklist.getId())
+                .propertyId(checklist.getProperty().getId())
+                .createdAt(checklist.getCreatedAt())
+                .itemCount(checklist.getItems().size())
+                .build()
+            ).collect(Collectors.toList());
     }
 
     @Transactional
@@ -137,49 +130,53 @@ public class ChecklistService {
     }
 
     @Transactional
-    public ChecklistUpdateResponse updateChecklist(Long id, List<ChecklistUpdateRequest> request) {
-        Checklist checklist = checklistRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
+    public ChecklistUpdateResponse updateChecklist(Long checklistId, List<ChecklistUpdateRequest> requests) {
+        Checklist checklist = checklistRepository.findById(checklistId)
+            .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다. id=" + checklistId));
 
-        if(checklist.getIsDeleted()){
-            throw new ResourceNotFoundException("삭제된 체크리스트입니다.");
+        if (checklist.getIsDeleted()) {
+            throw new ResourceNotFoundException("삭제된 체크리스트입니다. id=" + checklistId);
         }
 
-        //수정된 items의 개수를 반환하기 위해 사용
-        long changedCount = 0;
+        List<Long> itemIds = requests.stream()
+            .map(ChecklistUpdateRequest::getItemId)
+            .toList();
 
-        long updatedCount = request.stream()
-                .map(req -> {
-                    //itemId로 ChecklistItem을 find한 후 item의 checklistId와 위에서 find한 Checklist의 id가 일치하는지 확인
-                    ChecklistItem item = checklistItemRepository.findById(req.getItemId())
-                            .filter(i -> i.getChecklist().getId().equals(id))
-                            .orElseThrow(() -> new ResourceNotFoundException("해당 체크리스트에 항목이 존재하지 않습니다."));
+        List<ChecklistItem> items = checklistItemRepository.findAllById(itemIds);
 
-                    //수정 되었는지를 확인하기 위함
-                    boolean changed = false;
+        Map<Long, ChecklistItem> itemMap = items.stream()
+            .filter(item -> item.getChecklist().getId().equals(checklistId))
+            .collect(Collectors.toMap(ChecklistItem::getId, Function.identity()));
 
-                    //memo 수정
-                    if (!Objects.equals(item.getMemo(), req.getMemo())) {
-                        item.setMemo(req.getMemo());
-                        changed = true;
-                    }
+        int changedCount = 0;
 
-                    //severity 수정
-                    if (!Objects.equals(item.getSeverity(), req.getSeverity())) {
-                        item.setSeverity(req.getSeverity());
-                        changed = true;
-                    }
+        for (ChecklistUpdateRequest req : requests) {
+            ChecklistItem item = itemMap.get(req.getItemId());
+            if (item == null) {
+                throw new ResourceNotFoundException("해당 체크리스트에 항목이 존재하지 않습니다. itemId=" + req.getItemId());
+            }
 
-                    return changed;
-                })
-                .filter(Boolean::booleanValue)
-                .count();
+            boolean changed = false;
+
+            if (!Objects.equals(item.getMemo(), req.getMemo())) {
+                item.setMemo(req.getMemo());
+                changed = true;
+            }
+            if (!Objects.equals(item.getSeverity(), req.getSeverity())) {
+                item.setSeverity(req.getSeverity());
+                changed = true;
+            }
+
+            if (changed) changedCount++;
+        }
 
         return ChecklistUpdateResponse.builder()
-                .checklistId(checklist.getId())
-                .propertyId(checklist.getProperty().getId())
-                .updatedItemCount(request.size())
-                .updatedAt(LocalDateTime.now())
-                .build();
+            .checklistId(checklist.getId())
+            .propertyId(checklist.getProperty().getId())
+            .updatedItemCount(changedCount)
+            .updatedAt(LocalDateTime.now())
+            .build();
     }
 }
+
+
