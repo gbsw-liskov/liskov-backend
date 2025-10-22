@@ -1,5 +1,6 @@
 package com.example.liskovbackend.entity;
 
+import com.example.liskovbackend.enums.Severity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -18,13 +19,16 @@ public class ChecklistItem {
     @JoinColumn(name = "checklist_id", nullable = false)
     private Checklist checklist;
 
-    private String category;
+//    private String category;
 
     private String content;
 
+//    @Column(name = "is_required")
+//    private Boolean isRequired = true;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Severity severity = Severity.NONE;
+    private Severity severity;
 
     private String memo;
 
@@ -32,13 +36,14 @@ public class ChecklistItem {
     private String photoUrl;
 
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
 
     @PrePersist
     public void prePersist() {
+        severity = Severity.NONE;
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
