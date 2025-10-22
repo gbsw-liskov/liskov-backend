@@ -123,7 +123,7 @@ public class ChecklistService {
             throw new ResourceNotFoundException("이미 삭제된 체크리스트입니다.");
         }
 
-        checklist.setIsDeleted(true);
+        checklist.delete();
     }
 
     @Transactional
