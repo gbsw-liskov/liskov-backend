@@ -1,6 +1,7 @@
 package com.example.liskovbackend.global.handler;
 
 import com.example.liskovbackend.common.ApiResponse;
+import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,5 +15,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleResourceNotFoundException(ResourceNotFoundException e){
         return ApiResponse.error(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    //리소스가 이미 존재할 때
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleResourceAlreadyExistsException(ResourceAlreadyExistsException e){
+        return ApiResponse.error(e.getMessage(), HttpStatus.CONFLICT);
     }
 }

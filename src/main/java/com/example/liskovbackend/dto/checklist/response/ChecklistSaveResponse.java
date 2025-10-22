@@ -1,4 +1,4 @@
-package com.example.liskovbackend.dto;
+package com.example.liskovbackend.dto.checklist.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,17 +9,11 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @Builder
-public class AllChecklistGetResponse {
-    //[{
-    //    checklistId,
-    //    propertyId,
-    //    createdAt,
-    //    itemCount,
-    //}]
+@AllArgsConstructor
+public class ChecklistSaveResponse {
     private Long checklistId;
     private Long propertyId;
-    private LocalDateTime createdAt;
     private Integer itemCount;
+    private LocalDateTime createdAt;
 }

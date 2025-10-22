@@ -1,19 +1,20 @@
-package com.example.liskovbackend.dto;
+package com.example.liskovbackend.dto.checklist.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
-public class ChecklistSaveResponse {
+public class ChecklistGetResponse {
+
     private Long checklistId;
     private Long propertyId;
-    private Integer itemCount;
-    private LocalDateTime createdAt;
+    private List<ChecklistItemGetResponse> items;
+
 }

@@ -1,4 +1,4 @@
-package com.example.liskovbackend.dto;
+package com.example.liskovbackend.dto.checklist.request;
 
 import lombok.Builder;
 import lombok.Getter;

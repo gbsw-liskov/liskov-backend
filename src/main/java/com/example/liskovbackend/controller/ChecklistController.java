@@ -1,13 +1,16 @@
 package com.example.liskovbackend.controller;
 
 import com.example.liskovbackend.common.ApiResponse;
-import com.example.liskovbackend.dto.*;
+import com.example.liskovbackend.dto.checklist.request.ChecklistSaveRequest;
+import com.example.liskovbackend.dto.checklist.request.ChecklistUpdateRequest;
+import com.example.liskovbackend.dto.checklist.response.AllChecklistGetResponse;
+import com.example.liskovbackend.dto.checklist.response.ChecklistGetResponse;
+import com.example.liskovbackend.dto.checklist.response.ChecklistSaveResponse;
+import com.example.liskovbackend.dto.checklist.response.ChecklistUpdateResponse;
 import com.example.liskovbackend.service.ChecklistService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

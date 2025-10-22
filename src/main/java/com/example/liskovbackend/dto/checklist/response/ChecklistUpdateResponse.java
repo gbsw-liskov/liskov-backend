@@ -1,4 +1,4 @@
-package com.example.liskovbackend.dto;
+package com.example.liskovbackend.dto.checklist.response;
 
 import com.example.liskovbackend.enums.Severity;
 import lombok.AllArgsConstructor;

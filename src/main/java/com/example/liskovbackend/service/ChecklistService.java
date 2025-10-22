@@ -1,9 +1,13 @@
 package com.example.liskovbackend.service;
 
-import com.example.liskovbackend.dto.*;
+import com.example.liskovbackend.dto.checklist.request.ChecklistItemsSaveRequest;
+import com.example.liskovbackend.dto.checklist.request.ChecklistSaveRequest;
+import com.example.liskovbackend.dto.checklist.request.ChecklistUpdateRequest;
+import com.example.liskovbackend.dto.checklist.response.*;
 import com.example.liskovbackend.entity.Checklist;
 import com.example.liskovbackend.entity.ChecklistItem;
 import com.example.liskovbackend.entity.Property;
+import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.ChecklistItemRepository;
 import com.example.liskovbackend.repository.ChecklistRepository;
@@ -25,6 +29,7 @@ public class ChecklistService {
     private final PropertyRepository propertyRepository;
     private final ChecklistItemRepository checklistItemRepository;
 
+    //체크리스트 저장
     @Transactional
     public ChecklistSaveResponse saveChecklist(ChecklistSaveRequest request){
 
@@ -32,10 +37,14 @@ public class ChecklistService {
         Optional<Property> optionalProperty = propertyRepository.findById(request.getPropertyId());
 
         if(optionalProperty.isEmpty()){
-            throw new ResourceNotFoundException("매물을 찾을 수 없습니다. " + request.getPropertyId());
+            throw new ResourceNotFoundException("매물을 찾을 수 없습니다. ");
         }
 
         Property property = optionalProperty.get();
+
+        if(property.getChecklists() != null){
+            throw new ResourceAlreadyExistsException("매물에 대한 체크리스트가 이미 존재합니다.");
+        }
 
         List<ChecklistItemsSaveRequest> itemsDto = request.getItems();
 
@@ -69,6 +78,7 @@ public class ChecklistService {
                 .build();
     }
 
+    //체크리스트 단건 조회
     @Transactional(readOnly = true)
     public ChecklistGetResponse getChecklistById(Long id) {
         Checklist checklist = checklistRepository.findById(id)

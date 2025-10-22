@@ -6,12 +6,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.liskovbackend.dto.ChecklistItemsSaveRequest;
-import com.example.liskovbackend.dto.ChecklistSaveRequest;
-import com.example.liskovbackend.dto.ChecklistSaveResponse;
+import com.example.liskovbackend.dto.checklist.request.ChecklistItemsSaveRequest;
+import com.example.liskovbackend.dto.checklist.request.ChecklistSaveRequest;
+import com.example.liskovbackend.dto.checklist.response.ChecklistSaveResponse;
 import com.example.liskovbackend.entity.Checklist;
 import com.example.liskovbackend.entity.Property;
 import com.example.liskovbackend.enums.Severity;
+import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.ChecklistItemRepository;
 import com.example.liskovbackend.repository.ChecklistRepository;
@@ -111,6 +112,40 @@ class SaveChecklistTest {
         // then
         // PropertyNotFoundException이 발생해야 정상
         assertThrows(ResourceNotFoundException.class, () -> checklistService.saveChecklist(request));
+
+        // repository 호출 검증
+        verify(propertyRepository, times(1)).findById(propertyId);
+        verifyNoInteractions(checklistRepository);
+        verifyNoInteractions(checklistItemRepository);
+    }
+
+    @Test
+    void saveChecklist_alreadyExists(){
+        // given
+        Long propertyId = 1L;
+        // 이미 체크리스트가 있는 매물 설정
+        Property property = Property.builder()
+                .id(propertyId)
+                .checklists(List.of(Checklist.builder().id(1L).build())) // 체크리스트 존재
+                .build();
+
+        // propertyRepository.findById()가 호출될 때 Optional.of(property) 반환
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
+
+        // 요청 DTO 생성
+        ChecklistSaveRequest request = ChecklistSaveRequest.builder()
+                .propertyId(propertyId)
+                .items(List.of(
+                        ChecklistItemsSaveRequest.builder()
+                                .content("Check plumbing")
+                                .severity(Severity.DANGER)
+                                .build()
+                ))
+                .build();
+
+        // then
+        // 이미 체크리스트가 있으므로 ResourceAlreadyExistsException 발생 확인
+        assertThrows(ResourceAlreadyExistsException.class, () -> checklistService.saveChecklist(request));
 
         // repository 호출 검증
         verify(propertyRepository, times(1)).findById(propertyId);

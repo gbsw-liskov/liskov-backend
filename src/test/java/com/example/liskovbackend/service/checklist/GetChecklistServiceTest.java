@@ -1,8 +1,8 @@
 package com.example.liskovbackend.service.checklist;
 
-import com.example.liskovbackend.dto.AllChecklistGetResponse;
-import com.example.liskovbackend.dto.ChecklistGetResponse;
-import com.example.liskovbackend.dto.ChecklistItemGetResponse;
+import com.example.liskovbackend.dto.checklist.response.AllChecklistGetResponse;
+import com.example.liskovbackend.dto.checklist.response.ChecklistGetResponse;
+import com.example.liskovbackend.dto.checklist.response.ChecklistItemGetResponse;
 import com.example.liskovbackend.entity.Checklist;
 import com.example.liskovbackend.entity.ChecklistItem;
 import com.example.liskovbackend.entity.Property;
