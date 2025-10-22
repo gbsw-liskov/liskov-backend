@@ -28,23 +28,20 @@ public class ChecklistController {
 
     //체크리스트 저장
     @PostMapping
-    public ResponseEntity<ApiResponse<ChecklistSaveResponse>> saveChecklist(@Valid @RequestBody ChecklistSaveRequest request){
-        ChecklistSaveResponse response = checklistService.saveChecklist(request);
-        return ApiResponse.ok(response);
+    public ResponseEntity<ApiResponse<ChecklistSaveResponse>> saveChecklist(@Valid @RequestBody ChecklistSaveRequest request) {
+        return ApiResponse.ok(checklistService.saveChecklist(request));
     }
 
     //체크리스트 개별 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ChecklistGetResponse>> getChecklistById(@PathVariable Long id){
-        ChecklistGetResponse response = checklistService.getChecklistById(id);
-        return ApiResponse.ok(response);
+    public ResponseEntity<ApiResponse<ChecklistGetResponse>> getChecklistById(@PathVariable Long id) {
+        return ApiResponse.ok(checklistService.getChecklistById(id));
     }
 
     //체크리스트 전체 조회
     @GetMapping
-    public ResponseEntity<ApiResponse<List<AllChecklistGetResponse>>> getAllChecklist(){
-        List<AllChecklistGetResponse> response = checklistService.getAllChecklist();
-        return ApiResponse.ok(response);
+    public ResponseEntity<ApiResponse<List<AllChecklistGetResponse>>> getAllChecklist() {
+        return ApiResponse.ok(checklistService.getAllChecklist());
     }
 
     //체크리스트 삭제
@@ -56,8 +53,7 @@ public class ChecklistController {
 
     //체크리스트 수정
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ChecklistUpdateResponse>> updateChecklist(@PathVariable Long id, @Valid @RequestBody List<ChecklistUpdateRequest> request){
-        ChecklistUpdateResponse response = checklistService.updateChecklist(id, request);
-        return ApiResponse.ok(response);
+    public ResponseEntity<ApiResponse<ChecklistUpdateResponse>> updateChecklist(@PathVariable Long id, @Valid @RequestBody List<ChecklistUpdateRequest> request) {
+        return ApiResponse.ok(checklistService.updateChecklist(id, request));
     }
 }
