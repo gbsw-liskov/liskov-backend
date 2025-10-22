@@ -23,13 +23,13 @@ public class Checklist {
 //    private String description;
 
     @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted = false;
+    private Boolean isDeleted;
 
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL)
     private List<ChecklistItem> items;
@@ -40,6 +40,7 @@ public class Checklist {
 
     @PrePersist
     public void prePersist() {
+        isDeleted = false;
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }

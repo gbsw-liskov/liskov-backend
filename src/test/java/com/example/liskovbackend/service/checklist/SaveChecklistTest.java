@@ -1,4 +1,4 @@
-package com.example.liskovbackend.service;
+package com.example.liskovbackend.service.checklist;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,6 +16,7 @@ import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.ChecklistItemRepository;
 import com.example.liskovbackend.repository.ChecklistRepository;
 import com.example.liskovbackend.repository.PropertyRepository;
+import com.example.liskovbackend.service.ChecklistService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

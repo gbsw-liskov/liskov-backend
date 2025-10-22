@@ -42,19 +42,20 @@ public class Property {
     private LocalDate availableDate;
 
     @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted = false;
+    private Boolean isDeleted;
 
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.PERSIST)
     private List<Checklist> checklists;
 
     @PrePersist
     public void prePersist() {
+        isDeleted = false;
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }

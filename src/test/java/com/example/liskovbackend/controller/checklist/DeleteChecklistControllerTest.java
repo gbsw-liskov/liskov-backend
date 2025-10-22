@@ -1,5 +1,6 @@
-package com.example.liskovbackend.controller;
+package com.example.liskovbackend.controller.checklist;
 
+import com.example.liskovbackend.controller.ChecklistController;
 import com.example.liskovbackend.service.ChecklistService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
