@@ -135,7 +135,7 @@ public class ChecklistService {
             .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다. id=" + checklistId));
 
         if (checklist.getIsDeleted()) {
-            throw new ResourceNotFoundException("삭제된 체크리스트입니다. id=" + checklistId);
+            throw new ResourceNotFoundException("삭제된 체크리스트입니다.");
         }
 
         List<Long> itemIds = requests.stream()
@@ -153,7 +153,7 @@ public class ChecklistService {
         for (ChecklistUpdateRequest req : requests) {
             ChecklistItem item = itemMap.get(req.getItemId());
             if (item == null) {
-                throw new ResourceNotFoundException("해당 체크리스트에 항목이 존재하지 않습니다. itemId=" + req.getItemId());
+                throw new ResourceNotFoundException("해당 체크리스트에 항목이 존재하지 않습니다");
             }
 
             boolean changed = false;
