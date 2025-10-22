@@ -57,6 +57,7 @@ class GetChecklistServiceTest {
                 .id(1L)
                 .property(property)
                 .items(Arrays.asList(item1, item2))
+                .isDeleted(false)
                 .build();
     }
 
@@ -89,6 +90,7 @@ class GetChecklistServiceTest {
         verify(checklistRepository, times(1)).findById(checklistId);
     }
 
+
     @Test
     void getChecklistById_notFound_throwsException() {
         // given
@@ -102,5 +104,24 @@ class GetChecklistServiceTest {
 
         assertEquals("체크리스트가 존재하지 않습니다.", exception.getMessage());
         verify(checklistRepository, times(1)).findById(invalidId);
+    }
+
+    @Test
+    void getChecklistById_isDeleted_throwsException() {
+        // given
+        Long checklistId = 1L;
+        Checklist deletedChecklist = Checklist.builder()
+                .id(checklistId)
+                .isDeleted(true)
+                .build();
+
+        when(checklistRepository.findById(checklistId))
+                .thenReturn(Optional.of(deletedChecklist));
+
+        // when & then
+        assertThrows(ResourceNotFoundException.class,
+                () -> checklistService.getChecklistById(checklistId));
+
+        verify(checklistRepository, times(1)).findById(checklistId);
     }
 }

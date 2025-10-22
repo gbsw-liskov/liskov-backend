@@ -74,6 +74,10 @@ public class ChecklistService {
         Checklist checklist = checklistRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
 
+        if(checklist.getIsDeleted()){
+            throw new ResourceNotFoundException("삭제된 체크리스트입니다.");
+        }
+
         List<ChecklistItem> checklistItems = checklist.getItems();
 
         List<ChecklistItemGetResponse> items = checklistItems.stream()
@@ -98,6 +102,7 @@ public class ChecklistService {
     public List<AllChecklistGetResponse> getAllChecklist() {
         List<Checklist> allChecklists = checklistRepository.findAll();
         List<AllChecklistGetResponse> responses = allChecklists.stream()
+                .filter(checklist -> !checklist.getIsDeleted())
                 .map(checklist -> AllChecklistGetResponse.builder()
                         .checklistId(checklist.getId())
                         .propertyId(checklist.getProperty().getId())
@@ -114,6 +119,10 @@ public class ChecklistService {
         Checklist checklist = checklistRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
 
+        if(checklist.getIsDeleted()){
+            throw new ResourceNotFoundException("이미 삭제된 체크리스트입니다.");
+        }
+
         checklist.setIsDeleted(true);
     }
 
@@ -121,6 +130,10 @@ public class ChecklistService {
     public ChecklistUpdateResponse updateChecklist(Long id, List<ChecklistUpdateRequest> request) {
         Checklist checklist = checklistRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
+
+        if(checklist.getIsDeleted()){
+            throw new ResourceNotFoundException("삭제된 체크리스트입니다.");
+        }
 
         //수정된 items의 개수를 반환하기 위해 사용
         long changedCount = 0;
