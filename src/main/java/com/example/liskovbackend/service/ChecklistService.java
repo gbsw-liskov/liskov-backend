@@ -46,16 +46,15 @@ public class ChecklistService {
             throw new ResourceAlreadyExistsException("매물에 대한 체크리스트가 이미 존재합니다.");
         }
 
-        List<ChecklistItemsSaveRequest> itemsDto = request.getItems();
-
         //매물에 대한 체크리스트 생성
         Checklist checklist = Checklist.builder()
                 .property(property)
                 .items(null)
                 .build();
 
-
         //체크리스트 아이템 생성, 저장
+        List<ChecklistItemsSaveRequest> itemsDto = request.getItems();
+
         List<ChecklistItem> savedChecklistItems = itemsDto.stream()
                 .map(itemDto -> ChecklistItem.builder()
                         .checklist(checklist)

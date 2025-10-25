@@ -51,7 +51,7 @@ public class ChecklistController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteChecklist(@PathVariable Long id){
         checklistService.deleteChecklist(id);
-        return ApiResponse.noContent();
+        return ApiResponse.ok("체크리스트가 삭제되었습니다.");
     }
 
     //체크리스트 수정
