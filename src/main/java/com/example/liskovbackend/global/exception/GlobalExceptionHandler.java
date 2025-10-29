@@ -1,8 +1,6 @@
-package com.example.liskovbackend.global.handler;
+package com.example.liskovbackend.global.exception;
 
 import com.example.liskovbackend.common.ApiResponse;
-import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
-import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

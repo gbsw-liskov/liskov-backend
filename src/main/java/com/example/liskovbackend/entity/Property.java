@@ -30,7 +30,7 @@ public class Property {
     @Column(name = "property_type", nullable = false)
     private PropertyType propertyType;
 
-    private String floor;
+    private Integer floor;
 
     @Column(name = "build_year")
     private Integer buildYear;
