@@ -1,8 +1,8 @@
 package com.example.liskovbackend.service;
 
-import com.example.liskovbackend.dto.PropertyCreateRequestDto;
-import com.example.liskovbackend.dto.PropertyDetailDto;
-import com.example.liskovbackend.dto.PropertySummaryDto;
+import com.example.liskovbackend.dto.property.PropertyCreateRequestDto;
+import com.example.liskovbackend.dto.property.PropertyDetailDto;
+import com.example.liskovbackend.dto.property.PropertySummaryDto;
 import com.example.liskovbackend.entity.Property;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.PropertyRepository;

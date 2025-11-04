@@ -1,4 +1,4 @@
-package com.example.liskovbackend.dto;
+package com.example.liskovbackend.dto.property;
 
 import com.example.liskovbackend.entity.Property;
 import lombok.AllArgsConstructor;
