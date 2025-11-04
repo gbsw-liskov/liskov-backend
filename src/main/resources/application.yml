@@ -5,6 +5,3 @@ spring:
   application:
     name: liskov-backend
 
-  jpa:
-    hibernate:
-      ddl-auto: create

@@ -1,5 +1,6 @@
 package com.example.liskovbackend.entity;
 
+import com.example.liskovbackend.enums.Severity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;

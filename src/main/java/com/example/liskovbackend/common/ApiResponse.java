@@ -17,8 +17,12 @@ public class ApiResponse<T> {
         return ResponseEntity.ok(new ApiResponse<>(true, "success", data));
     }
 
+    public static <T> ResponseEntity<ApiResponse<T>> ok(String message) {
+        return ResponseEntity.ok(new ApiResponse<>(true, message, null));
+    }
+
     public static <T> ResponseEntity<ApiResponse<T>> error(String message, HttpStatus status) {
         return ResponseEntity.status(status)
-            .body(new ApiResponse<>(false, message, null));
+                .body(new ApiResponse<>(false, message, null));
     }
 }
