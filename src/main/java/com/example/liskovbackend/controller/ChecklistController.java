@@ -1,6 +1,8 @@
 package com.example.liskovbackend.controller;
 
 import com.example.liskovbackend.common.ApiResponse;
+import com.example.liskovbackend.dto.checklist.request.ChecklistGenerateRequest;
+import com.example.liskovbackend.dto.checklist.response.ChecklistGenerateResponse;
 import com.example.liskovbackend.dto.checklist.request.ChecklistSaveRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistUpdateRequest;
 import com.example.liskovbackend.dto.checklist.response.AllChecklistGetResponse;
@@ -20,11 +22,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChecklistController {
     private final ChecklistService checklistService;
-//    @PostMapping("/generate")
-//    public ResponseEntity<ApiResponse<List<ChecklistGenerateResponse>>> generateChecklist(@RequestBody ChecklistGenerateRequest request){
-//        List<ChecklistGenerateResponse> response = checklistService.generateChecklist(request);
-//        return ApiResponse.ok(response);
-//    }
+
+    @PostMapping("/generate")
+    public ResponseEntity<ApiResponse<List<ChecklistGenerateResponse>>> generateChecklist(@RequestBody ChecklistGenerateRequest request){
+        List<ChecklistGenerateResponse> response = checklistService.generateChecklist(request);
+        return ApiResponse.ok(response);
+    }
 
     //체크리스트 저장
     @PostMapping
