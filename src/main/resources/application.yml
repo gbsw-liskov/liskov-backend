@@ -5,3 +5,13 @@ spring:
   application:
     name: liskov-backend
 
+  profiles:
+    active: secret
+  jpa:
+    properties:
+      hibernate.format_sql: true
+      dialect: org.hibernate.dialect.MySQL9InnoDBDialect
+
+logging:
+  level:
+    org.hibernate.SQL: debug
