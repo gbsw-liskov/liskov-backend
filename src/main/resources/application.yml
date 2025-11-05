@@ -1,4 +1,10 @@
 spring:
+  config:
+    import: classpath:application-secret.yml
+
+  application:
+    name: liskov-backend
+
   profiles:
     active: secret
   jpa:
