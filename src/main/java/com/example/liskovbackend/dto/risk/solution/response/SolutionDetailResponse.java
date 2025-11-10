@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Builder
-public class CopingDto {
-    private String title;
-    private List<String> list;
+public class SolutionDetailResponse {
+    private List<CopingDto> coping;
+    private List<String> checklist;
 }

@@ -1,6 +1,8 @@
 package com.example.liskovbackend.service;
 
 import com.example.liskovbackend.dto.risk.solution.request.SolutionGenerateRequest;
+import com.example.liskovbackend.dto.risk.solution.response.CopingDto;
+import com.example.liskovbackend.dto.risk.solution.response.SolutionDetailResponse;
 import com.example.liskovbackend.dto.risk.solution.response.SolutionGenerateResponse;
 import com.example.liskovbackend.entity.Coping;
 import com.example.liskovbackend.entity.Property;
@@ -43,7 +45,7 @@ public class RiskService {
         List<Coping> savedCopings = response.getCoping().stream()
                 .map(copingResponse -> Coping.builder()
                         .title(copingResponse.getTitle())
-                        .list(List.of(copingResponse.getList()))
+                        .list(copingResponse.getList())
                         .risk(existingRisk)
                         .build())
                 .toList();
@@ -54,6 +56,31 @@ public class RiskService {
         return SolutionGenerateResponse.builder()
                 .coping(response.getCoping())
                 .checklist(response.getChecklist())
+                .build();
+
+    }
+
+    @Transactional(readOnly = true)
+    public SolutionDetailResponse getSolution(Long id) {
+        //find risk
+        Risk risk = riskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("위험 매물 리포트를 찾을 수 없습니다."));
+
+        if(risk.getCoping().isEmpty() || risk.getChecklist().isEmpty()){
+            throw new ResourceNotFoundException("리포트에 저장된 대처 방안이 존재하지 않습니다.");
+        }
+
+        //dto 반환
+        return SolutionDetailResponse.builder()
+                .coping(
+                        risk.getCoping().stream()
+                                .map(coping -> CopingDto.builder()
+                                        .title(coping.getTitle())
+                                        .list(coping.getList())
+                                        .build())
+                                .toList()
+                )
+                .checklist(risk.getChecklist())
                 .build();
 
     }
