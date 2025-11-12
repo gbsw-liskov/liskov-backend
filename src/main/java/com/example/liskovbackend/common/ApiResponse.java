@@ -23,6 +23,6 @@ public class ApiResponse<T> {
 
     public static <T> ResponseEntity<ApiResponse<T>> error(String message, HttpStatus status) {
         return ResponseEntity.status(status)
-            .body(new ApiResponse<>(false, message, null));
+                .body(new ApiResponse<>(false, message, null));
     }
 }

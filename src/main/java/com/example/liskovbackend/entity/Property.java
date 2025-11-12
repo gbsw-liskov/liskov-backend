@@ -41,6 +41,14 @@ public class Property {
     @Column(name = "available_date")
     private LocalDate availableDate;
 
+    @Column(name = "market_price")
+    private Integer marketPrice;
+
+    private Integer deposit;
+
+    @Column(name = "monthly_rent")
+    private Integer monthlyRent;
+
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
@@ -52,6 +60,9 @@ public class Property {
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.PERSIST)
     private List<Checklist> checklists;
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
+    private List<Risk> risks;
 
     @PrePersist
     public void prePersist() {
