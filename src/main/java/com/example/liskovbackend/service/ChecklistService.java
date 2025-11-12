@@ -1,12 +1,15 @@
 package com.example.liskovbackend.service;
 
+import com.example.liskovbackend.dto.checklist.request.ChecklistGenerateRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistItemsSaveRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistSaveRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistUpdateRequest;
 import com.example.liskovbackend.dto.checklist.response.*;
+import com.example.liskovbackend.dto.gpt.request.GptChecklistGenerateRequest;
 import com.example.liskovbackend.entity.Checklist;
 import com.example.liskovbackend.entity.ChecklistItem;
 import com.example.liskovbackend.entity.Property;
+import com.example.liskovbackend.global.exception.AiNoResponseException;
 import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.ChecklistItemRepository;
@@ -15,6 +18,7 @@ import com.example.liskovbackend.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,6 +33,37 @@ public class ChecklistService {
     private final ChecklistRepository checklistRepository;
     private final PropertyRepository propertyRepository;
     private final ChecklistItemRepository checklistItemRepository;
+    private final GptOssService gptOssService;
+
+    //체크리스트 생성
+    @Transactional
+    public ChecklistGenerateResponse generateChecklist(ChecklistGenerateRequest request) {
+        //매물 조회
+        Property property = propertyRepository.findById(request.getPropertyId())
+                .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
+
+        //AI 요청 dto 생성
+        GptChecklistGenerateRequest gptRequest = GptChecklistGenerateRequest.builder()
+                .propertyId(property.getId())
+                .name(property.getName())
+                .address(property.getAddress())
+                .propertyType(property.getPropertyType())
+                .floor(property.getFloor())
+                .buildYear(property.getBuildYear())
+                .area(property.getArea())
+                .availableDate(property.getAvailableDate())
+                .build();
+
+        //AI 체크리스트 생성 로직 호출
+        Mono<ChecklistGenerateResponse> response = gptOssService.generateChecklist(gptRequest);
+
+        if(response == null || response.block() == null){
+            throw new AiNoResponseException("체크리스트가 생성되지 않았습니다.");
+        }
+
+        //응답 반환
+        return response.block();
+    }
 
     //체크리스트 저장
     @Transactional
@@ -178,6 +213,8 @@ public class ChecklistService {
             .updatedAt(LocalDateTime.now())
             .build();
     }
+
+
 }
 
 
