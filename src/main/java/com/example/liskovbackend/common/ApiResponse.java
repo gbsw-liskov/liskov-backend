@@ -20,10 +20,6 @@ public class ApiResponse<T> {
     public static <T> ResponseEntity<ApiResponse<T>> ok(String message) {
         return ResponseEntity.ok(new ApiResponse<>(true, message, null));
     }
-  
-    public static <T> ResponseEntity<ApiResponse<T>> noContent() {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
 
     public static <T> ResponseEntity<ApiResponse<T>> error(String message, HttpStatus status) {
         return ResponseEntity.status(status)

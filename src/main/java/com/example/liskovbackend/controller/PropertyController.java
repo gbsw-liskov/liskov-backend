@@ -1,9 +1,9 @@
 package com.example.liskovbackend.controller;
 
 import com.example.liskovbackend.common.ApiResponse;
-import com.example.liskovbackend.dto.PropertyCreateRequestDto;
-import com.example.liskovbackend.dto.PropertyDetailDto;
-import com.example.liskovbackend.dto.PropertySummaryDto;
+import com.example.liskovbackend.dto.property.PropertyCreateRequestDto;
+import com.example.liskovbackend.dto.property.PropertyDetailDto;
+import com.example.liskovbackend.dto.property.PropertySummaryDto;
 import com.example.liskovbackend.service.PropertyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

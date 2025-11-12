@@ -37,4 +37,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleResourceAlreadyExistsException(ResourceAlreadyExistsException e){
         return ApiResponse.error(e.getMessage(), HttpStatus.CONFLICT);
     }
+
+    //AI가 제대로 된 요청을 반환하지 않았을 때(AI로부터 응답을 받지 못했을 때)
+    @ExceptionHandler(AiNoResponseException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAiNoResponseException(AiNoResponseException e){
+        return ApiResponse.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

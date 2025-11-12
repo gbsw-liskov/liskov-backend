@@ -1,12 +1,15 @@
 package com.example.liskovbackend.service;
 
+import com.example.liskovbackend.dto.checklist.request.ChecklistGenerateRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistItemsSaveRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistSaveRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistUpdateRequest;
 import com.example.liskovbackend.dto.checklist.response.*;
+import com.example.liskovbackend.dto.gpt.request.GptChecklistGenerateRequest;
 import com.example.liskovbackend.entity.Checklist;
 import com.example.liskovbackend.entity.ChecklistItem;
 import com.example.liskovbackend.entity.Property;
+import com.example.liskovbackend.global.exception.AiNoResponseException;
 import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.ChecklistItemRepository;
@@ -15,12 +18,12 @@ import com.example.liskovbackend.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -30,6 +33,37 @@ public class ChecklistService {
     private final ChecklistRepository checklistRepository;
     private final PropertyRepository propertyRepository;
     private final ChecklistItemRepository checklistItemRepository;
+    private final GptOssService gptOssService;
+
+    //체크리스트 생성
+    @Transactional
+    public ChecklistGenerateResponse generateChecklist(ChecklistGenerateRequest request) {
+        //매물 조회
+        Property property = propertyRepository.findById(request.getPropertyId())
+                .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
+
+        //AI 요청 dto 생성
+        GptChecklistGenerateRequest gptRequest = GptChecklistGenerateRequest.builder()
+                .propertyId(property.getId())
+                .name(property.getName())
+                .address(property.getAddress())
+                .propertyType(property.getPropertyType())
+                .floor(property.getFloor())
+                .buildYear(property.getBuildYear())
+                .area(property.getArea())
+                .availableDate(property.getAvailableDate())
+                .build();
+
+        //AI 체크리스트 생성 로직 호출
+        Mono<ChecklistGenerateResponse> response = gptOssService.generateChecklist(gptRequest);
+
+        if(response == null || response.block() == null){
+            throw new AiNoResponseException("체크리스트가 생성되지 않았습니다.");
+        }
+
+        //응답 반환
+        return response.block();
+    }
 
     //체크리스트 저장
     @Transactional
@@ -43,16 +77,15 @@ public class ChecklistService {
             throw new ResourceAlreadyExistsException("매물에 대한 체크리스트가 이미 존재합니다.");
         }
 
-        List<ChecklistItemsSaveRequest> itemsDto = request.getItems();
-
         //매물에 대한 체크리스트 생성
         Checklist checklist = Checklist.builder()
                 .property(property)
                 .items(null)
                 .build();
 
-
         //체크리스트 아이템 생성, 저장
+        List<ChecklistItemsSaveRequest> itemsDto = request.getItems();
+
         List<ChecklistItem> savedChecklistItems = itemsDto.stream()
                 .map(itemDto -> ChecklistItem.builder()
                         .checklist(checklist)
@@ -102,6 +135,7 @@ public class ChecklistService {
             .build();
     }
 
+    //체크리스트 전체 조회
     @Transactional(readOnly = true)
     public List<AllChecklistGetResponse> getAllChecklist() {
         List<Checklist> allChecklists = checklistRepository.findAll();
@@ -117,6 +151,7 @@ public class ChecklistService {
             ).collect(Collectors.toList());
     }
 
+    //체크리스트 삭제
     @Transactional
     public void deleteChecklist(Long id) {
         Checklist checklist = checklistRepository.findById(id)
@@ -129,6 +164,7 @@ public class ChecklistService {
         checklist.delete();
     }
 
+    //체크리스트 수정
     @Transactional
     public ChecklistUpdateResponse updateChecklist(Long checklistId, List<ChecklistUpdateRequest> requests) {
         Checklist checklist = checklistRepository.findById(checklistId)
@@ -177,6 +213,8 @@ public class ChecklistService {
             .updatedAt(LocalDateTime.now())
             .build();
     }
+
+
 }
 
 
