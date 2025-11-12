@@ -1,8 +1,6 @@
 package com.example.liskovbackend.controller;
 
 import com.example.liskovbackend.common.ApiResponse;
-import com.example.liskovbackend.dto.checklist.request.ChecklistGenerateRequest;
-import com.example.liskovbackend.dto.checklist.response.ChecklistGenerateResponse;
 import com.example.liskovbackend.dto.checklist.request.ChecklistSaveRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistUpdateRequest;
 import com.example.liskovbackend.dto.checklist.response.AllChecklistGetResponse;

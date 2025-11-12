@@ -1,15 +1,12 @@
 package com.example.liskovbackend.service;
 
-import com.example.liskovbackend.dto.checklist.request.ChecklistGenerateRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistItemsSaveRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistSaveRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistUpdateRequest;
 import com.example.liskovbackend.dto.checklist.response.*;
-import com.example.liskovbackend.dto.model.response.GptOssResponse;
 import com.example.liskovbackend.entity.Checklist;
 import com.example.liskovbackend.entity.ChecklistItem;
 import com.example.liskovbackend.entity.Property;
-import com.example.liskovbackend.global.exception.AiNoResponseException;
 import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.ChecklistItemRepository;
@@ -18,11 +15,8 @@ import com.example.liskovbackend.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Mono;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,8 +29,6 @@ public class ChecklistService {
     private final ChecklistRepository checklistRepository;
     private final PropertyRepository propertyRepository;
     private final ChecklistItemRepository checklistItemRepository;
-
-    private final GptOssService gptOssService;
 
     //체크리스트 저장
     @Transactional
@@ -185,44 +177,6 @@ public class ChecklistService {
             .updatedItemCount(changedCount)
             .updatedAt(LocalDateTime.now())
             .build();
-    }
-
-    //체크리스트 생성
-    @Transactional
-    public List<ChecklistGenerateResponse> generateChecklist(ChecklistGenerateRequest request) {
-        Property property = propertyRepository.findById(request.getPropertyId())
-                .orElseThrow(() -> new ResourceNotFoundException("매물이 존재하지 않습니다."));
-
-        Mono<GptOssResponse> gptOssResponseMono = gptOssService.generateChecklist(property);
-
-        GptOssResponse gptOssResponse = gptOssResponseMono
-                .block(Duration.ofSeconds(15));
-
-        String extractedContent = extractContentFromResponse(gptOssResponse);
-
-        return processChecklistContent(extractedContent);
-    }
-
-    //content 추출
-    private String extractContentFromResponse(GptOssResponse gptOssResponse) {
-        if(gptOssResponse.getChoices() == null ||
-        gptOssResponse.getChoices().isEmpty() ||
-        gptOssResponse.getChoices().get(0).getMessage() == null){
-            throw new AiNoResponseException("AI 응답에서 유효한 체크리스트 목록을 찾을 수 없습니다.");
-        }
-
-        return gptOssResponse.getChoices().get(0).getMessage().getContent();
-    }
-
-    private List<ChecklistGenerateResponse> processChecklistContent(String content) {
-        // AI가 반환한 "경량성; 직관적 구문;..." 문자열을 ';' 구분자로 분리
-        String[] items = content.split(";\\s*"); // 세미콜론과 뒤따르는 공백을 기준으로 분리
-
-        return Arrays.stream(items)
-                .map(item -> ChecklistGenerateResponse.builder()
-                        .content(item.trim()) // 각 항목의 앞뒤 공백 제거
-                        .build())
-                .collect(Collectors.toList());
     }
 }
 
