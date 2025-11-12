@@ -21,12 +21,6 @@ import java.util.List;
 public class ChecklistController {
     private final ChecklistService checklistService;
 
-    @PostMapping("/generate")
-    public ResponseEntity<ApiResponse<List<ChecklistGenerateResponse>>> generateChecklist(@RequestBody ChecklistGenerateRequest request){
-        List<ChecklistGenerateResponse> response = checklistService.generateChecklist(request);
-        return ApiResponse.ok(response);
-    }
-
     //체크리스트 저장
     @PostMapping
     public ResponseEntity<ApiResponse<ChecklistSaveResponse>> saveChecklist(@Valid @RequestBody ChecklistSaveRequest request) {
