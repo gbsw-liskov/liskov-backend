@@ -15,3 +15,6 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
+
+ai:
+    url: http://ai.zipchak-backend.kro.kr
