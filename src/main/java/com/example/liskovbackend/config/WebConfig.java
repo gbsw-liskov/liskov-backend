@@ -18,7 +18,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                    .allowedOrigins(corsProperties.getAllowedOrigins().toArray(new String[0]))
+                    .allowedOriginPatterns(corsProperties.getAllowedOrigins().toArray(new String[0]))
                     .allowedMethods(corsProperties.getAllowedMethods())
                     .allowedHeaders(corsProperties.getAllowedHeaders())
                     .allowCredentials(corsProperties.isAllowCredentials());
