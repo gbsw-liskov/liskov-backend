@@ -11,15 +11,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "copings")
-public class Coping {
+@Table(name = "solution_copings")
+public class SolutionCoping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "risk_id", nullable = false)
-    private Risk risk;
+    @JoinColumn(name = "solution_id", nullable = false)
+    private Solution solution;
 
     @Column(nullable = false)
     private String title;
