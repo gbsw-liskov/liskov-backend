@@ -41,4 +41,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleExternalServiceException(ExternalServiceException e){
         return ApiResponse.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(AiNoResponseException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAiNoResponseException(AiNoResponseException e){
+        return ApiResponse.error(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
