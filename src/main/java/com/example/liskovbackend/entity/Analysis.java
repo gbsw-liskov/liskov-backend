@@ -2,37 +2,38 @@ package com.example.liskovbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "checklist_items")
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
-public class ChecklistItem {
+@Table(name = "analyses")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Analysis {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "checklist_id", nullable = false)
-    private Checklist checklist;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "property_id", nullable = false)
+    private Property property;
 
-//    private String category;
-
-    private String content;
-
-//    @Column(name = "is_required")
-//    private Boolean isRequired = true;
-
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Severity severity;
+    private Integer totalRisk;
 
-    private String memo;
+    @Column(columnDefinition = "TEXT")
+    private String summary;
 
-    @Column(name = "photo_url")
-    private String photoUrl;
+    @OneToMany(mappedBy = "analysis", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnalysisDetail> details;
+
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -42,7 +43,7 @@ public class ChecklistItem {
 
     @PrePersist
     public void prePersist() {
-        severity = Severity.NONE;
+        isDeleted = false;
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }

@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ChecklistService {
+
     private final ChecklistRepository checklistRepository;
     private final PropertyRepository propertyRepository;
     private final ChecklistItemRepository checklistItemRepository;
@@ -168,7 +169,7 @@ public class ChecklistService {
     @Transactional
     public ChecklistUpdateResponse updateChecklist(Long checklistId, List<ChecklistUpdateRequest> requests) {
         Checklist checklist = checklistRepository.findById(checklistId)
-            .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다. id=" + checklistId));
+            .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다"));
 
         if (checklist.getIsDeleted()) {
             throw new ResourceNotFoundException("삭제된 체크리스트입니다.");

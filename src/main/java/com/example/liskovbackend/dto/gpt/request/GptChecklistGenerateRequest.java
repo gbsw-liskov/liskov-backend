@@ -1,6 +1,6 @@
 package com.example.liskovbackend.dto.gpt.request;
 
-import com.example.liskovbackend.enums.PropertyType;
+import com.example.liskovbackend.entity.PropertyType;
 import lombok.Builder;
 import lombok.Data;
 

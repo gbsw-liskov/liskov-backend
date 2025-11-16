@@ -1,4 +1,4 @@
-package com.example.liskovbackend.enums;
+package com.example.liskovbackend.entity;
 
 public enum PropertyType {
     APARTMENT,

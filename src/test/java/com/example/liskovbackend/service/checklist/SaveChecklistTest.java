@@ -11,7 +11,7 @@ import com.example.liskovbackend.dto.checklist.request.ChecklistSaveRequest;
 import com.example.liskovbackend.dto.checklist.response.ChecklistSaveResponse;
 import com.example.liskovbackend.entity.Checklist;
 import com.example.liskovbackend.entity.Property;
-import com.example.liskovbackend.enums.Severity;
+import com.example.liskovbackend.entity.Severity;
 import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.ChecklistItemRepository;
