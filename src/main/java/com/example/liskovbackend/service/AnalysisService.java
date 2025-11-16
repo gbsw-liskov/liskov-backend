@@ -8,6 +8,7 @@ import com.example.liskovbackend.entity.Analysis;
 import com.example.liskovbackend.entity.AnalysisDetail;
 import com.example.liskovbackend.entity.Property;
 import com.example.liskovbackend.entity.Severity;
+import com.example.liskovbackend.global.exception.AiNoResponseException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.AnalysisRepository;
 import com.example.liskovbackend.repository.PropertyRepository;
@@ -34,7 +35,7 @@ public class AnalysisService {
     public AnalyzeResponse analyze(AnalyzeRequest request, List<MultipartFile> files) {
 
         var property = propertyRepository.findById(request.propertyId())
-            .orElseThrow(() -> new ResourceNotFoundException("Property not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
 
         var aiRequest = makeAiRequest(property, request, files);
 
@@ -45,7 +46,7 @@ public class AnalysisService {
         );
 
         if (aiResponse == null) {
-            throw new IllegalStateException("AI 서버 응답 없음");
+            throw new AiNoResponseException("AI 서버가 응답할 수 없습니다.");
         }
 
         var analysis = saveAnalysis(property, aiResponse);
@@ -56,7 +57,7 @@ public class AnalysisService {
     @Transactional(readOnly = true)
     public AnalyzeResponse getAnalysis(Long id) {
         var analysis = analysisRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Analysis not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("분석 결과를 찾을 수 없습니다."));
 
         return convertToResponse(analysis);
     }
@@ -66,7 +67,6 @@ public class AnalysisService {
         List<AiAnalyzeRequest.FileData> fileData = files.stream()
             .map(this::convertFile)
             .collect(Collectors.toCollection(ArrayList::new));
-
 
         return new AiAnalyzeRequest(
             p.getId(),
@@ -93,7 +93,7 @@ public class AnalysisService {
                 encoded
             );
         } catch (Exception e) {
-            throw new RuntimeException("파일 인코딩 실패");
+            throw new RuntimeException("파일 인코딩이 실패했습니다.");
         }
     }
 
