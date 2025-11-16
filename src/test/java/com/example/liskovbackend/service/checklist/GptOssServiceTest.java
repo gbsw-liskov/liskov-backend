@@ -3,7 +3,7 @@ package com.example.liskovbackend.service.checklist;
 
 import com.example.liskovbackend.dto.checklist.response.ChecklistGenerateResponse;
 import com.example.liskovbackend.dto.gpt.request.GptChecklistGenerateRequest;
-import com.example.liskovbackend.enums.PropertyType;
+import com.example.liskovbackend.entity.PropertyType;
 import com.example.liskovbackend.service.GptOssService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;

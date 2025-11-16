@@ -1,6 +1,6 @@
 package com.example.liskovbackend.dto.checklist.request;
 
-import com.example.liskovbackend.enums.Severity;
+import com.example.liskovbackend.entity.Severity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
