@@ -60,6 +60,12 @@ public class Property {
     @OneToMany(mappedBy = "property", cascade = CascadeType.PERSIST)
     private List<Checklist> checklists;
 
+    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Analysis analysis;
+
+    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Solution solution;
+  
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
     private List<Risk> risks;
 
