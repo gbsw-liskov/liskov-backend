@@ -2,6 +2,8 @@ package com.example.liskovbackend.service;
 
 import com.example.liskovbackend.dto.gpt.request.GptSolutionGenerateRequest;
 import com.example.liskovbackend.dto.risk.solution.response.SolutionDetailResponse;
+import com.example.liskovbackend.dto.checklist.response.ChecklistGenerateResponse;
+import com.example.liskovbackend.dto.gpt.request.GptChecklistGenerateRequest;
 import com.example.liskovbackend.global.exception.AiNoResponseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +17,7 @@ public class GptOssService {
     private final String apiUrl;
     private final String modelName;
     private static final String RISK_SOLUTION_ENDPOINT = "/solution";
+    private static final String CHECKLIST_ENDPOINT = "/checklist";
 
     public GptOssService(
             WebClient.Builder webClientBuilder,

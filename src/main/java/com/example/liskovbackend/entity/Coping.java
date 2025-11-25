@@ -3,30 +3,27 @@ package com.example.liskovbackend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
-@Table(name = "analysis_details")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class AnalysisDetail {
+import java.util.List;
 
+@Entity
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Table(name = "copings")
+public class Coping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "analysis_id", nullable = false)
-    private Analysis analysis;
+    @JoinColumn(name = "risk_id", nullable = false)
+    private Risk risk;
 
     @Column(nullable = false)
     private String title;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
-
-    @Enumerated(EnumType.STRING)
-    private Severity severity;
+    @Column(nullable = false)
+    private List<String> list;
 }
-
