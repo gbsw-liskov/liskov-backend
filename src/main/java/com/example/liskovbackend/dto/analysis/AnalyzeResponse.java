@@ -9,6 +9,6 @@ public record AnalyzeResponse(
 ) {
     public record Detail(
         String original,
-        String analysis
+        String analysisText
     ) {}
 }

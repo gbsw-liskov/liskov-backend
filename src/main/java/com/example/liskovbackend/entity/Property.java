@@ -67,9 +67,6 @@ public class Property {
 
     @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private Solution solution;
-  
-    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL)
-    private List<Risk> risks;
 
     @PrePersist
     public void prePersist() {
