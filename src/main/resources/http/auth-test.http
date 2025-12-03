@@ -1,0 +1,80 @@
+### Environment variables
+@baseUrl = http://localhost:8080/api/auth
+@contentType = application/json
+
+### 1. 회원가입 (Signup)
+POST {{baseUrl}}/signup
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "password": "password123",
+  "firstName": "홍",
+  "lastName": "길동"
+}
+
+### 예상 응답:
+# HTTP/1.1 200 OK
+# {
+#   "message": "회원가입이 완료되었습니다."
+# }
+
+### 2. 로그인 (Login)
+POST {{baseUrl}}/login
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### 예상 응답:
+# HTTP/1.1 200 OK
+# {
+#   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+#   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+# }
+
+### 3. 잘못된 비밀번호로 로그인 시도 (Login with wrong password)
+POST {{baseUrl}}/login
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "password": "wrongpassword"
+}
+
+### 예상 응답:
+# HTTP/1.1 401 Unauthorized
+# {
+#   "message": "이메일 또는 비밀번호가 잘못되었습니다."
+# }
+
+### 4. 존재하지 않는 이메일로 로그인 시도 (Login with non-existent email)
+POST {{baseUrl}}/login
+Content-Type: {{contentType}}
+
+{
+  "email": "nonexistent@example.com",
+  "password": "password123"
+}
+
+### 예상 응답:
+# HTTP/1.1 401 Unauthorized
+# {
+#   "message": "이메일 또는 비밀번호가 잘못되었습니다."
+# }
+
+### 5. 인증이 필요한 API 호출 예시 (Protected API call example)
+### 먼저 로그인하여 얻은 accessToken을 아래에 설정해야 합니다.
+GET http://localhost:8080/api/some-protected-endpoint
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+
+### 토큰이 만료된 경우 새로운 토큰을 발급받기 위한 예시 API 호출
+### (이 엔드포인트는 구현되지 않았으므로 참고용입니다)
+# POST {{baseUrl}}/refresh-token
+# Content-Type: {{contentType}}
+#
+# {
+#   "refreshToken": "YOUR_REFRESH_TOKEN_HERE"
+# }
