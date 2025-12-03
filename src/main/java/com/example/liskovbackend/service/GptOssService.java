@@ -5,7 +5,6 @@ import com.example.liskovbackend.dto.risk.solution.response.SolutionDetailRespon
 import com.example.liskovbackend.dto.checklist.response.ChecklistGenerateResponse;
 import com.example.liskovbackend.dto.gpt.request.GptChecklistGenerateRequest;
 import com.example.liskovbackend.global.exception.AiNoResponseException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
