@@ -12,7 +12,9 @@ import java.util.List;
 @Entity
 @Table(name = "properties")
 @Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Property {
 
     @Id
