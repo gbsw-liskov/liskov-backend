@@ -29,6 +29,20 @@ public class GptOssService {
         this.webClient = webClientBuilder.baseUrl(apiUrl).build();
     }
 
+    public Mono<ChecklistGenerateResponse> generateChecklist(GptChecklistGenerateRequest gptRequest) {
+
+        return webClient.post()
+                .uri(CHECKLIST_ENDPOINT)
+                .body(Mono.just(gptRequest), GptChecklistGenerateRequest.class)
+                .retrieve()
+                .onStatus(
+                        status -> status.is4xxClientError() || status.is5xxServerError(),
+                        clientResponse -> Mono.error(new AiNoResponseException("AI를 호출에 실패하였습니다. : " + clientResponse.statusCode()))
+                )
+                .bodyToMono(ChecklistGenerateResponse.class);
+
+    }
+
     public Mono<SolutionDetailResponse> generateSolution(GptSolutionGenerateRequest gptRequest) {
 
         return webClient.post()

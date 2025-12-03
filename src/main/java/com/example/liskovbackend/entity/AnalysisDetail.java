@@ -21,10 +21,10 @@ public class AnalysisDetail {
     private Analysis analysis;
 
     @Column(nullable = false)
-    private String title;
+    private String original;
 
     @Column(columnDefinition = "TEXT")
-    private String content;
+    private String analysisText;
 
     @Enumerated(EnumType.STRING)
     private Severity severity;

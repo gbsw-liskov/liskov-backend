@@ -50,8 +50,8 @@ public class SolutionService {
 
         List<DetailDto> detailDto = analysis.getDetails().stream()
                 .map(detail -> DetailDto.builder()
-                        .title(detail.getTitle())
-                        .content(detail.getContent())
+                        .title(detail.getOriginal())
+                        .content(detail.getAnalysisText())
                         .build()
                 )
                 .toList();

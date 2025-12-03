@@ -108,8 +108,8 @@ public class AnalysisService {
         var details = ai.details().stream()
             .map(d -> AnalysisDetail.builder()
                 .analysis(analysis)
-                .title(d.title())
-                .content(d.content())
+                .original(d.title())
+                .analysisText(d.content())
                 .severity(Severity.valueOf(d.severity()))
                 .build())
             .toList();
@@ -123,7 +123,7 @@ public class AnalysisService {
         return new AnalyzeResponse(
             a.getTotalRisk(),
             a.getDetails().stream()
-                .map(d -> new AnalyzeResponse.Detail(d.getTitle(), d.getContent()))
+                .map(d -> new AnalyzeResponse.Detail(d.getOriginal(), d.getAnalysisText()))
                 .toList(),
             a.getSummary()
         );
