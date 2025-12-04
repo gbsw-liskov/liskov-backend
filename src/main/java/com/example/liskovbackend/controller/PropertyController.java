@@ -1,6 +1,5 @@
 package com.example.liskovbackend.controller;
 
-import com.example.liskovbackend.common.ApiResponse;
 import com.example.liskovbackend.dto.property.PropertyCreateRequestDto;
 import com.example.liskovbackend.dto.property.PropertyDetailDto;
 import com.example.liskovbackend.dto.property.PropertySummaryDto;

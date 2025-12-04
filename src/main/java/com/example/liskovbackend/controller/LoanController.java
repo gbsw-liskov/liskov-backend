@@ -1,6 +1,5 @@
 package com.example.liskovbackend.controller;
 
-import com.example.liskovbackend.common.ApiResponse;
 import com.example.liskovbackend.dto.loan.request.LoanRequest;
 import com.example.liskovbackend.dto.loan.response.LoanResponse;
 import com.example.liskovbackend.service.LoanService;
