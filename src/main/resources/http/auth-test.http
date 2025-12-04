@@ -13,11 +13,8 @@ Content-Type: {{contentType}}
   "lastName": "길동"
 }
 
-### 예상 응답:
-# HTTP/1.1 200 OK
-# {
-#   "message": "회원가입이 완료되었습니다."
-# }
+### 로그인 후 얻은 액세스 토큰을 아래 변수에 설정하세요
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ### 2. 로그인 (Login)
 POST {{baseUrl}}/login
@@ -44,12 +41,6 @@ Content-Type: {{contentType}}
   "password": "wrongpassword"
 }
 
-### 예상 응답:
-# HTTP/1.1 401 Unauthorized
-# {
-#   "message": "이메일 또는 비밀번호가 잘못되었습니다."
-# }
-
 ### 4. 존재하지 않는 이메일로 로그인 시도 (Login with non-existent email)
 POST {{baseUrl}}/login
 Content-Type: {{contentType}}
@@ -58,23 +49,3 @@ Content-Type: {{contentType}}
   "email": "nonexistent@example.com",
   "password": "password123"
 }
-
-### 예상 응답:
-# HTTP/1.1 401 Unauthorized
-# {
-#   "message": "이메일 또는 비밀번호가 잘못되었습니다."
-# }
-
-### 5. 인증이 필요한 API 호출 예시 (Protected API call example)
-### 먼저 로그인하여 얻은 accessToken을 아래에 설정해야 합니다.
-GET http://localhost:8080/api/some-protected-endpoint
-Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
-
-### 토큰이 만료된 경우 새로운 토큰을 발급받기 위한 예시 API 호출
-### (이 엔드포인트는 구현되지 않았으므로 참고용입니다)
-# POST {{baseUrl}}/refresh-token
-# Content-Type: {{contentType}}
-#
-# {
-#   "refreshToken": "YOUR_REFRESH_TOKEN_HERE"
-# }
