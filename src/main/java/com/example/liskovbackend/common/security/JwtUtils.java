@@ -24,12 +24,12 @@ public class JwtUtils {
 
     @Value("${jwt.access-token.expiration}")
     private long accessTokenExpiration; // 1 hour by default
-    
+
     @Value("${jwt.refresh-token.expiration}")
     private long refreshTokenExpiration; // 24 hours by default
 
     private final Map<String, String> refreshTokenStore = new HashMap<>();
-    
+
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
@@ -37,7 +37,7 @@ public class JwtUtils {
     public String generateAccessToken(User user) {
         return generateToken(user, accessTokenExpiration);
     }
-    
+
     public String generateRefreshToken(User user) {
         var token = generateToken(user, refreshTokenExpiration);
         refreshTokenStore.put(user.getEmail(), token);
@@ -60,15 +60,15 @@ public class JwtUtils {
     public String extractUsername(String token) {
         return extractClaim(token, claims -> claims.get("email", String.class));
     }
-    
+
     public String extractUserId(String token) {
         return extractClaim(token, Claims::getSubject);
     }
-    
+
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
-    
+
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         var claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -89,16 +89,16 @@ public class JwtUtils {
             return false;
         }
     }
-    
+
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
-    
+
     public boolean validateRefreshToken(String email, String refreshToken) {
         var storedToken = refreshTokenStore.get(email);
         return storedToken != null && storedToken.equals(refreshToken) && validateToken(refreshToken);
     }
-    
+
     public void invalidateRefreshToken(String email) {
         refreshTokenStore.remove(email);
     }

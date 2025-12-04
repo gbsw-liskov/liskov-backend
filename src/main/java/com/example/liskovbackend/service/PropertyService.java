@@ -1,8 +1,8 @@
 package com.example.liskovbackend.service;
 
-import com.example.liskovbackend.dto.property.PropertyCreateRequestDto;
-import com.example.liskovbackend.dto.property.PropertyDetailDto;
-import com.example.liskovbackend.dto.property.PropertySummaryDto;
+import com.example.liskovbackend.dto.property.PropertyCreateRequest;
+import com.example.liskovbackend.dto.property.PropertyDetail;
+import com.example.liskovbackend.dto.property.PropertySummary;
 import com.example.liskovbackend.entity.Property;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.PropertyRepository;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PropertyService {
@@ -20,9 +21,9 @@ public class PropertyService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<PropertySummaryDto> findAllProperties(Long userId) {
+    public List<PropertySummary> findAllProperties(Long userId) {
         return propertyRepository.findAllActiveByUserId(userId).stream()
-            .map(property -> PropertySummaryDto.builder()
+            .map(property -> PropertySummary.builder()
                 .propertyId(property.getId())
                 .name(property.getName())
                 .address(property.getAddress())
@@ -31,10 +32,10 @@ public class PropertyService {
     }
 
     @Transactional(readOnly = true)
-    public PropertyDetailDto findPropertyById(Long id, Long userId) {
+    public PropertyDetail findPropertyById(Long id, Long userId) {
         var property = propertyRepository.findByIdAndUserId(id, userId)
             .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
-        return PropertyDetailDto.from(property);
+        return PropertyDetail.from(property);
     }
 
     @Transactional
@@ -46,7 +47,7 @@ public class PropertyService {
     }
 
     @Transactional
-    public PropertyDetailDto saveProperty(PropertyCreateRequestDto request, Long userId) {
+    public PropertyDetail saveProperty(PropertyCreateRequest request, Long userId) {
         var user = userRepository.findById(userId)
             .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
 
@@ -62,6 +63,6 @@ public class PropertyService {
             .build();
 
         var newProperty = propertyRepository.save(property);
-        return PropertyDetailDto.from(newProperty);
+        return PropertyDetail.from(newProperty);
     }
 }

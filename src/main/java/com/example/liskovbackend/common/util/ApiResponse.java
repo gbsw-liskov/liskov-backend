@@ -1,4 +1,4 @@
-package com.example.liskovbackend.controller;
+package com.example.liskovbackend.common.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,7 +6,8 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-@Getter @Setter
+@Getter
+@Setter
 @AllArgsConstructor
 public class ApiResponse<T> {
     private boolean success;
@@ -23,6 +24,6 @@ public class ApiResponse<T> {
 
     public static <T> ResponseEntity<ApiResponse<T>> error(String message, HttpStatus status) {
         return ResponseEntity.status(status)
-                .body(new ApiResponse<>(false, message, null));
+            .body(new ApiResponse<>(false, message, null));
     }
 }

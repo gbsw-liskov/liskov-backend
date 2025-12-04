@@ -11,15 +11,15 @@ import java.time.LocalDateTime;
 @Getter @Setter
 @Builder
 @AllArgsConstructor
-public class PropertySummaryDto {
+public class PropertySummary {
 
     private Long propertyId;
     private String name;
     private String address;
     private LocalDateTime createdAt;
 
-    public static PropertySummaryDto from(Property property) {
-        return PropertySummaryDto.builder()
+    public static PropertySummary from(Property property) {
+        return PropertySummary.builder()
             .propertyId(property.getId())
             .name(property.getName())
             .address(property.getName())

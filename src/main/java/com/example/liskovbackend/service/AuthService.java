@@ -29,22 +29,22 @@ public class AuthService {
         }
 
         var user = User.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .isDeleted(false)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        
+            .email(request.getEmail())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .firstName(request.getFirstName())
+            .lastName(request.getLastName())
+            .isDeleted(false)
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .build();
+
         userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
         var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BadCredentialsException("이메일 또는 비밀번호가 잘못되었습니다."));
+            .orElseThrow(() -> new BadCredentialsException("이메일 또는 비밀번호가 잘못되었습니다."));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("이메일 또는 비밀번호가 잘못되었습니다.");
@@ -54,8 +54,8 @@ public class AuthService {
         var refreshToken = jwtUtils.generateRefreshToken(user);
 
         return AuthResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .build();
     }
 }

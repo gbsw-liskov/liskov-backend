@@ -11,12 +11,14 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class LoanService {
+
     private final GptOssService gptOssService;
+
     @Transactional
     public LoanResponse generateLoanGuide(LoanRequest loanRequest) {
-        Mono<LoanResponse> responseMono = gptOssService.generateLoanGuide(loanRequest);
+        var responseMono = gptOssService.generateLoanGuide(loanRequest);
 
-        if(responseMono == null || responseMono.block() == null){
+        if (responseMono == null || responseMono.block() == null) {
             throw new AiNoResponseException("대출 가이드가 생성되지 않았습니다.");
         }
 

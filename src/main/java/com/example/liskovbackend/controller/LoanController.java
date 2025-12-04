@@ -1,5 +1,6 @@
 package com.example.liskovbackend.controller;
 
+import com.example.liskovbackend.common.util.ApiResponse;
 import com.example.liskovbackend.dto.loan.request.LoanRequest;
 import com.example.liskovbackend.dto.loan.response.LoanResponse;
 import com.example.liskovbackend.service.LoanService;
@@ -16,8 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class LoanController {
     private final LoanService loanService;
+
     @PostMapping
-    public ResponseEntity<ApiResponse<LoanResponse>> generateLoanGuide(@Valid @RequestBody LoanRequest loanRequest){
+    public ResponseEntity<ApiResponse<LoanResponse>> generateLoanGuide(@Valid @RequestBody LoanRequest loanRequest) {
         return ApiResponse.ok(loanService.generateLoanGuide(loanRequest));
     }
 }
