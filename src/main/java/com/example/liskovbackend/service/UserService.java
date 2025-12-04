@@ -19,66 +19,56 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
-    
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    
+
     @Transactional(readOnly = true)
     public UserResponse getCurrentUser() {
-        User user = getAuthenticatedUser();
-        return UserResponse.fromEntity(user);
+        var user = getAuthenticatedUser();
+        return UserResponse.from(user);
     }
-    
+
     @Transactional
     public UserResponse updateUser(UserUpdateRequest request) {
-        User user = getAuthenticatedUser();
-        
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
+        var user = getAuthenticatedUser();
+
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
         user.setUpdatedAt(LocalDateTime.now());
-        
-        User savedUser = userRepository.save(user);
-        log.info("User updated successfully: {}", savedUser.getEmail());
-        
-        return UserResponse.fromEntity(savedUser);
+
+        var savedUser = userRepository.save(user);
+        return UserResponse.from(savedUser);
     }
-    
+
     @Transactional
     public void updatePassword(PasswordUpdateRequest request) {
-        User user = getAuthenticatedUser();
-        
-        // 현재 비밀번호 확인
-        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-            log.warn("Password update failed: Current password doesn't match for user {}", user.getEmail());
+        var user = getAuthenticatedUser();
+
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
             throw new BadCredentialsException("현재 비밀번호가 일치하지 않습니다.");
         }
-        
-        // 새 비밀번호 설정
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        user.setPassword(passwordEncoder.encode(request.newPassword()));
         user.setUpdatedAt(LocalDateTime.now());
-        
+
         userRepository.save(user);
-        log.info("Password updated successfully for user: {}", user.getEmail());
     }
-    
+
     @Transactional
     public void deleteUser() {
-        User user = getAuthenticatedUser();
-        
-        // 소프트 삭제 처리
+        var user = getAuthenticatedUser();
+
         user.setIsDeleted(true);
         user.setUpdatedAt(LocalDateTime.now());
-        
+
         userRepository.save(user);
-        log.info("User deleted (soft delete) successfully: {}", user.getEmail());
     }
-    
+
     private User getAuthenticatedUser() {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        var email = SecurityContextHolder.getContext().getAuthentication().getName();
+
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    log.error("User not found with email: {}", email);
-                    return new IllegalArgumentException("사용자를 찾을 수 없습니다.");
-                });
+            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
     }
 }

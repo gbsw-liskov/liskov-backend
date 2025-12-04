@@ -1,5 +1,6 @@
 package com.example.liskovbackend.controller;
 
+import com.example.liskovbackend.common.util.ApiResponse;
 import com.example.liskovbackend.dto.analysis.AnalyzeRequest;
 import com.example.liskovbackend.dto.analysis.AnalyzeResponse;
 import com.example.liskovbackend.service.AnalysisService;
@@ -17,6 +18,7 @@ public class AnalysisController {
 
     private final AnalysisService analysisService;
 
+    // 매물 분석
     @PostMapping
     public ResponseEntity<ApiResponse<AnalyzeResponse>> analyze(
         @RequestPart("request") AnalyzeRequest request,
@@ -26,6 +28,7 @@ public class AnalysisController {
         return ApiResponse.ok(response);
     }
 
+    // 매물 분석 조회
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<AnalyzeResponse>> getAnalysis(@PathVariable Long id) {
         var response = analysisService.getAnalysis(id);

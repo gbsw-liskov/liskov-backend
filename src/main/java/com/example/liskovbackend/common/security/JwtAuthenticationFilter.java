@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
 
         var path = request.getServletPath();
         if (path.startsWith("/api/auth/")) {
@@ -41,29 +41,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         var authHeader = request.getHeader("Authorization");
-        
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
-        
+
         var token = authHeader.substring(7);
         var email = jwtUtils.extractUsername(token);
-        
+
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (jwtUtils.validateToken(token)) {
                 var user = userRepository.findByEmail(email).orElse(null);
-                
+
                 if (user != null) {
                     var authentication = new UsernamePasswordAuthenticationToken(
-                            email, null, new ArrayList<>());
-                    
+                        email, null, new ArrayList<>());
+
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
         }
-        
+
         filterChain.doFilter(request, response);
     }
 }

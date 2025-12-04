@@ -15,59 +15,53 @@ import reactor.core.publisher.Mono;
 @Service
 public class GptOssService {
     private final WebClient webClient;
-    private final String apiUrl;
-    private final String modelName;
     private static final String RISK_SOLUTION_ENDPOINT = "/solution";
     private static final String CHECKLIST_ENDPOINT = "/checklist";
     private static final String LOAN_ENDPOINT = "/loan";
 
     public GptOssService(
-            WebClient.Builder webClientBuilder,
-            @Value("${gpt.oss.api-url}") String apiUrl,
-            @Value("${gpt.oss.model-name}") String modelName) {
+        WebClient.Builder webClientBuilder,
+        @Value("${gpt.oss.api-url}") String apiUrl,
+        @Value("${gpt.oss.model-name}") String modelName) {
 
-        this.apiUrl = apiUrl;
-        this.modelName = modelName;
         this.webClient = webClientBuilder.baseUrl(apiUrl).build();
     }
 
     public Mono<ChecklistGenerateResponse> generateChecklist(GptChecklistGenerateRequest gptRequest) {
 
         return webClient.post()
-                .uri(CHECKLIST_ENDPOINT)
-                .body(Mono.just(gptRequest), GptChecklistGenerateRequest.class)
-                .retrieve()
-                .onStatus(
-                        status -> status.is4xxClientError() || status.is5xxServerError(),
-                        clientResponse -> Mono.error(new AiNoResponseException("AI를 호출에 실패하였습니다. : " + clientResponse.statusCode()))
-                )
-                .bodyToMono(ChecklistGenerateResponse.class);
-
+            .uri(CHECKLIST_ENDPOINT)
+            .body(Mono.just(gptRequest), GptChecklistGenerateRequest.class)
+            .retrieve()
+            .onStatus(
+                status -> status.is4xxClientError() || status.is5xxServerError(),
+                clientResponse -> Mono.error(new AiNoResponseException("AI를 호출에 실패하였습니다. : " + clientResponse.statusCode()))
+            )
+            .bodyToMono(ChecklistGenerateResponse.class);
     }
 
     public Mono<SolutionDetailResponse> generateSolution(GptSolutionGenerateRequest gptRequest) {
 
         return webClient.post()
-                .uri(RISK_SOLUTION_ENDPOINT)
-                .body(Mono.just(gptRequest), GptSolutionGenerateRequest.class)
-                .retrieve()
-                .onStatus(
-                        status -> status.is4xxClientError() || status.is5xxServerError(),
-                        clientResponse -> Mono.error(new AiNoResponseException("AI를 호출에 실패하였습니다. : " + clientResponse.statusCode()))
-                )
-                .bodyToMono(SolutionDetailResponse.class);
-
+            .uri(RISK_SOLUTION_ENDPOINT)
+            .body(Mono.just(gptRequest), GptSolutionGenerateRequest.class)
+            .retrieve()
+            .onStatus(
+                status -> status.is4xxClientError() || status.is5xxServerError(),
+                clientResponse -> Mono.error(new AiNoResponseException("AI를 호출에 실패하였습니다. : " + clientResponse.statusCode()))
+            )
+            .bodyToMono(SolutionDetailResponse.class);
     }
 
     public Mono<LoanResponse> generateLoanGuide(LoanRequest loanRequest) {
         return webClient.post()
-                .uri(LOAN_ENDPOINT)
-                .body(Mono.just(loanRequest), LoanRequest.class)
-                .retrieve()
-                .onStatus(
-                        status -> status.is4xxClientError() || status.is5xxServerError(),
-                        clientResponse -> Mono.error(new AiNoResponseException("AI를 호출에 실패하였습니다. : " + clientResponse.statusCode()))
-                )
-                .bodyToMono(LoanResponse.class);
+            .uri(LOAN_ENDPOINT)
+            .body(Mono.just(loanRequest), LoanRequest.class)
+            .retrieve()
+            .onStatus(
+                status -> status.is4xxClientError() || status.is5xxServerError(),
+                clientResponse -> Mono.error(new AiNoResponseException("AI를 호출에 실패하였습니다. : " + clientResponse.statusCode()))
+            )
+            .bodyToMono(LoanResponse.class);
     }
 }

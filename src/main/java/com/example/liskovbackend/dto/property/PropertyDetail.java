@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PropertyDetailDto {
+public class PropertyDetail {
 
     private Long propertyId;
     private String name;
@@ -26,8 +26,8 @@ public class PropertyDetailDto {
     private LocalDate availableDate;
     private LocalDateTime createdAt;
 
-    public static PropertyDetailDto from(Property property) {
-        return PropertyDetailDto.builder()
+    public static PropertyDetail from(Property property) {
+        return PropertyDetail.builder()
             .propertyId(property.getId())
             .name(property.getName())
             .address(property.getAddress())

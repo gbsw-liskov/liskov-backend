@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PropertyCreateRequestDto {
+public class PropertyCreateRequest {
     private String name;
     private String address;
     private PropertyType propertyType;

@@ -64,7 +64,7 @@ public class AnalysisService {
 
     private AiAnalyzeRequest makeAiRequest(Property p, AnalyzeRequest req, List<MultipartFile> files) {
 
-        List<AiAnalyzeRequest.FileData> fileData = files.stream()
+        var fileData = files.stream()
             .map(this::convertFile)
             .collect(Collectors.toCollection(ArrayList::new));
 
@@ -87,6 +87,7 @@ public class AnalysisService {
     private AiAnalyzeRequest.FileData convertFile(MultipartFile file) {
         try {
             var encoded = Base64.getEncoder().encodeToString(file.getBytes());
+
             return new AiAnalyzeRequest.FileData(
                 file.getOriginalFilename(),
                 file.getContentType(),

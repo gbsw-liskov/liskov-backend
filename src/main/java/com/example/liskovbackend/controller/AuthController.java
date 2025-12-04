@@ -17,15 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    
+
     private final AuthService authService;
-    
+
+    // 회원가입
     @PostMapping("/signup")
     public ResponseEntity<MessageResponse> signup(@Valid @RequestBody SignupRequest signupRequest) {
         authService.signup(signupRequest);
         return ResponseEntity.ok(new MessageResponse("회원가입이 완료되었습니다."));
     }
-    
+
+    // 로그인
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         var authResponse = authService.login(loginRequest);
