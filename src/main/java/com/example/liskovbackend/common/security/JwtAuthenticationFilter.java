@@ -48,19 +48,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         var token = authHeader.substring(7);
-        var email = jwtUtils.extractUsername(token);
+        var userId = jwtUtils.extractUserId(token);
 
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (jwtUtils.validateToken(token)) {
-                var user = userRepository.findByEmail(email).orElse(null);
-
-                if (user != null) {
-                    var authentication = new UsernamePasswordAuthenticationToken(
-                        email, null, new ArrayList<>());
-
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
+                var authentication = new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
 
