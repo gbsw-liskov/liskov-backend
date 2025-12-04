@@ -1,4 +1,4 @@
-package com.example.liskovbackend.common;
+package com.example.liskovbackend.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

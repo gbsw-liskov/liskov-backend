@@ -1,6 +1,5 @@
 package com.example.liskovbackend.controller;
 
-import com.example.liskovbackend.common.ApiResponse;
 import com.example.liskovbackend.dto.analysis.AnalyzeRequest;
 import com.example.liskovbackend.dto.analysis.AnalyzeResponse;
 import com.example.liskovbackend.service.AnalysisService;

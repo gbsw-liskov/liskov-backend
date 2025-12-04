@@ -1,6 +1,5 @@
 package com.example.liskovbackend.controller;
 
-import com.example.liskovbackend.common.ApiResponse;
 import com.example.liskovbackend.dto.risk.solution.request.SolutionGenerateRequest;
 import com.example.liskovbackend.dto.risk.solution.response.SolutionDetailResponse;
 import com.example.liskovbackend.service.SolutionService;
