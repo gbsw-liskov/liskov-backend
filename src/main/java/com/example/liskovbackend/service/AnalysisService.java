@@ -13,6 +13,7 @@ import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.AnalysisRepository;
 import com.example.liskovbackend.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -32,6 +33,11 @@ public class AnalysisService {
     private final AnalysisRepository analysisRepository;
     private final RestTemplate restTemplate;
 
+    private final String ANALYSIS_ENDPOINT = "/analyze";
+
+    @Value("${ai.url}")
+    private String aiUrl;
+
     public AnalyzeResponse analyze(AnalyzeRequest request, List<MultipartFile> files) {
 
         var property = propertyRepository.findById(request.propertyId())
@@ -40,7 +46,7 @@ public class AnalysisService {
         var aiRequest = makeAiRequest(property, request, files);
 
         var aiResponse = restTemplate.postForObject(
-            "http://ai.zipchak-backend.kro.kr:8080/analyze",
+            aiUrl + ANALYSIS_ENDPOINT,
             aiRequest,
             AiAnalyzeResponse.class
         );
