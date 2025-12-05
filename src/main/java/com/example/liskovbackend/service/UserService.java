@@ -4,6 +4,7 @@ import com.example.liskovbackend.dto.user.request.PasswordUpdateRequest;
 import com.example.liskovbackend.dto.user.request.UserUpdateRequest;
 import com.example.liskovbackend.dto.user.response.UserResponse;
 import com.example.liskovbackend.entity.User;
+import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,17 +59,13 @@ public class UserService {
     @Transactional
     public void deleteUser() {
         var user = getAuthenticatedUser();
-
-        user.setIsDeleted(true);
-        user.setUpdatedAt(LocalDateTime.now());
-
-        userRepository.save(user);
+        userRepository.delete(user);
     }
 
     private User getAuthenticatedUser() {
-        var email = SecurityContextHolder.getContext().getAuthentication().getName();
+        var userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
 
-        return userRepository.findByEmail(email)
-            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
     }
 }

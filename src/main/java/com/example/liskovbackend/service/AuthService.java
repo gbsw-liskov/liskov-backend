@@ -33,7 +33,6 @@ public class AuthService {
             .password(passwordEncoder.encode(request.getPassword()))
             .firstName(request.getFirstName())
             .lastName(request.getLastName())
-            .isDeleted(false)
             .createdAt(LocalDateTime.now())
             .updatedAt(LocalDateTime.now())
             .build();
