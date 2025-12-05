@@ -21,7 +21,7 @@ public class GptOssService {
 
     public GptOssService(
         WebClient.Builder webClientBuilder,
-        @Value("${ai-url}") String apiUrl) {
+        @Value("${ai.url}") String apiUrl) {
 
         this.webClient = webClientBuilder.baseUrl(apiUrl).build();
     }
