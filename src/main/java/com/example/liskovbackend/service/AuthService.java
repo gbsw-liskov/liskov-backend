@@ -2,6 +2,7 @@ package com.example.liskovbackend.service;
 
 import com.example.liskovbackend.common.security.JwtUtils;
 import com.example.liskovbackend.dto.auth.request.LoginRequest;
+import com.example.liskovbackend.dto.auth.request.RefreshRequest;
 import com.example.liskovbackend.dto.auth.request.SignupRequest;
 import com.example.liskovbackend.dto.auth.response.AuthResponse;
 import com.example.liskovbackend.entity.User;
@@ -55,6 +56,28 @@ public class AuthService {
         return AuthResponse.builder()
             .accessToken(accessToken)
             .refreshToken(refreshToken)
+            .build();
+    }
+
+    @Transactional(readOnly = true)
+    public AuthResponse refresh(RefreshRequest request) {
+        var refreshToken = request.refreshToken();
+
+        var userId = jwtUtils.extractUserId(refreshToken);
+
+        if (!jwtUtils.validateRefreshToken(userId, refreshToken)) {
+            throw new BadCredentialsException("유효하지 않은 리프레시 토큰입니다.");
+        }
+
+        var user = userRepository.findById(Long.valueOf(userId))
+            .orElseThrow(() -> new BadCredentialsException("유효하지 않은 사용자입니다."));
+
+        var newAccessToken = jwtUtils.generateAccessToken(user);
+        var newRefreshToken = jwtUtils.generateRefreshToken(user);
+
+        return AuthResponse.builder()
+            .accessToken(newAccessToken)
+            .refreshToken(newRefreshToken)
             .build();
     }
 }
