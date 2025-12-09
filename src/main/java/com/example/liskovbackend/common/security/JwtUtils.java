@@ -23,10 +23,10 @@ public class JwtUtils {
     private String secret;
 
     @Value("${jwt.access-token.expiration}")
-    private long accessTokenExpiration; // 1 hour by default
+    private long accessTokenExpiration;
 
     @Value("${jwt.refresh-token.expiration}")
-    private long refreshTokenExpiration; // 24 hours by default
+    private long refreshTokenExpiration;
 
     private final Map<String, String> refreshTokenStore = new HashMap<>();
 
@@ -40,25 +40,28 @@ public class JwtUtils {
 
     public String generateRefreshToken(User user) {
         var token = generateToken(user, refreshTokenExpiration);
-        refreshTokenStore.put(user.getEmail(), token);
+        refreshTokenStore.put(user.getId().toString(), token);
         return token;
     }
 
     private String generateToken(User user, long expiration) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("email", user.getEmail());
+        claims.put("userId", user.getId());
 
         return Jwts.builder()
             .claims(claims)
             .subject(user.getId().toString())
-            .issuedAt(new Date(System.currentTimeMillis()))
+            .issuedAt(new Date())
             .expiration(new Date(System.currentTimeMillis() + expiration))
             .signWith(getSigningKey(), Jwts.SIG.HS256)
             .compact();
     }
 
-    public String extractUsername(String token) {
-        return extractClaim(token, claims -> claims.get("email", String.class));
+    public String extractUserIdClaim(String token) {
+        return extractClaim(token, claims -> {
+            Long id = claims.get("userId", Long.class);
+            return id != null ? id.toString() : null;
+        });
     }
 
     public String extractUserId(String token) {
@@ -94,12 +97,13 @@ public class JwtUtils {
         return extractExpiration(token).before(new Date());
     }
 
-    public boolean validateRefreshToken(String email, String refreshToken) {
-        var storedToken = refreshTokenStore.get(email);
-        return storedToken != null && storedToken.equals(refreshToken) && validateToken(refreshToken);
+    public boolean validateRefreshToken(String userId, String refreshToken) {
+        var stored = refreshTokenStore.get(userId);
+        return stored != null && stored.equals(refreshToken) && validateToken(refreshToken);
     }
 
-    public void invalidateRefreshToken(String email) {
-        refreshTokenStore.remove(email);
+    public void invalidateRefreshToken(String userId) {
+        refreshTokenStore.remove(userId);
     }
 }
+

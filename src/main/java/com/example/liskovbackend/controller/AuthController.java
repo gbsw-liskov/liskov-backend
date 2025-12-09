@@ -1,6 +1,7 @@
 package com.example.liskovbackend.controller;
 
 import com.example.liskovbackend.dto.auth.request.LoginRequest;
+import com.example.liskovbackend.dto.auth.request.RefreshRequest;
 import com.example.liskovbackend.dto.auth.request.SignupRequest;
 import com.example.liskovbackend.dto.auth.response.AuthResponse;
 import com.example.liskovbackend.dto.auth.response.MessageResponse;
@@ -32,5 +33,10 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         var authResponse = authService.login(loginRequest);
         return ResponseEntity.ok(authResponse);
+    }
+
+    @PostMapping("/refresh")
+    public AuthResponse refresh(@RequestBody RefreshRequest request) {
+        return authService.refresh(request);
     }
 }
