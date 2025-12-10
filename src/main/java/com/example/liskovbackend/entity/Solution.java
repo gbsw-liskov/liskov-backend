@@ -27,6 +27,10 @@ public class Solution {
 
     private List<String> checklist;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 

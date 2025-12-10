@@ -34,6 +34,10 @@ public class Checklist {
     @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL)
     private List<ChecklistItem> items;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public void delete() {
         isDeleted = true;
     }

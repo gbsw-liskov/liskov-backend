@@ -49,6 +49,15 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Property> properties;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Checklist> checklists;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Analysis> analyses;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Solution> solutions;
+
     public void updateUserInfo(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;

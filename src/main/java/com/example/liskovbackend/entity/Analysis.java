@@ -31,6 +31,10 @@ public class Analysis {
     @OneToMany(mappedBy = "analysis", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnalysisDetail> details;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
