@@ -29,21 +29,30 @@ public class GptOssService {
     public Mono<ChecklistGenerateResponse> generateChecklist(GptChecklistGenerateRequest gptRequest) {
 
         return webClient.post()
-            .uri(CHECKLIST_ENDPOINT)
-            .body(Mono.just(gptRequest), GptChecklistGenerateRequest.class)
-            .retrieve()
-            .onStatus(
-                status -> status.is4xxClientError() || status.is5xxServerError(),
-                clientResponse -> Mono.error(new AiNoResponseException("AI를 호출에 실패하였습니다. : " + clientResponse.statusCode()))
-            )
-            .bodyToMono(ChecklistGenerateResponse.class);
+                .uri(CHECKLIST_ENDPOINT)
+                .bodyValue(gptRequest)
+                .retrieve()
+                .onStatus(
+                        status -> status.is4xxClientError() || status.is5xxServerError(),
+                        clientResponse -> clientResponse.bodyToMono(String.class)
+                                .defaultIfEmpty("(응답 바디 없음)")
+                                .flatMap(errorBody -> {
+                                    var message = "AI 호출 실패 ("
+                                            + clientResponse.statusCode() + ") : "
+                                            + errorBody;
+
+                                    return Mono.error(new AiNoResponseException(message));
+                                })
+                )
+                .bodyToMono(ChecklistGenerateResponse.class);
     }
+
 
     public Mono<SolutionDetailResponse> generateSolution(GptSolutionGenerateRequest gptRequest) {
 
         return webClient.post()
             .uri(RISK_SOLUTION_ENDPOINT)
-            .body(Mono.just(gptRequest), GptSolutionGenerateRequest.class)
+            .bodyValue(gptRequest)
             .retrieve()
             .onStatus(
                 status -> status.is4xxClientError() || status.is5xxServerError(),
@@ -55,7 +64,7 @@ public class GptOssService {
     public Mono<LoanResponse> generateLoanGuide(LoanRequest loanRequest) {
         return webClient.post()
             .uri(LOAN_ENDPOINT)
-            .body(Mono.just(loanRequest), LoanRequest.class)
+            .bodyValue(loanRequest)
             .retrieve()
             .onStatus(
                 status -> status.is4xxClientError() || status.is5xxServerError(),
