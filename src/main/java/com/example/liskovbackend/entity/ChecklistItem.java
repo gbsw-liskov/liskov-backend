@@ -59,4 +59,8 @@ public class ChecklistItem {
     public void updateSeverity(Severity severity) {
         this.severity=severity;
     }
+
+    public void updateChecklist(Checklist otherChecklist) {
+        this.checklist = otherChecklist;
+    }
 }

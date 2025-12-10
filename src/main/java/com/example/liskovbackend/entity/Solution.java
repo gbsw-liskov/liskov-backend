@@ -51,4 +51,8 @@ public class Solution {
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    public void updateCopings(List<SolutionCoping> savedSolutionCopings) {
+        this.copings = savedSolutionCopings;
+    }
 }

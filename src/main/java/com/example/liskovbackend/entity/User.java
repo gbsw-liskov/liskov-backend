@@ -68,5 +68,9 @@ public class User {
         this.password = password;
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void updateAnalyze(Analysis analysis) {
+        this.analyses.add(analysis);
+    }
 }
 
