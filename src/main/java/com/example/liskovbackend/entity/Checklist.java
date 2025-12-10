@@ -2,8 +2,11 @@ package com.example.liskovbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.SoftDelete;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,8 +15,8 @@ import java.util.List;
 @Table(name = "checklists")
 @Getter
 @NoArgsConstructor @AllArgsConstructor @Builder
-@SoftDelete(columnName = "is_deleted")
-@SQLRestriction("is_deleted = false")
+@SQLRestriction("isDeleted = false")
+@SQLDelete(sql = "UPDATE checklists SET deleted = true WHERE id = ?")
 public class Checklist {
 
     @Id
@@ -24,9 +27,11 @@ public class Checklist {
     @JoinColumn(name = "property_id", nullable = false)
     private Property property;
 
+    @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -37,17 +42,8 @@ public class Checklist {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-
-    @PrePersist
-    public void prePersist() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+    @Builder.Default
+    private boolean isDeleted = false;
 
     public void updateItems(List<ChecklistItem> savedChecklistItems) {
         this.items = savedChecklistItems;

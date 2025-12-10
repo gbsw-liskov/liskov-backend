@@ -2,6 +2,7 @@ package com.example.liskovbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.SoftDelete;
 import org.hibernate.annotations.Where;
@@ -20,8 +21,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@SoftDelete(columnName = "is_deleted")
-@SQLRestriction("is_deleted = false")
+@SQLRestriction("isDeleted = false")
+@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
 @EntityListeners(AuditingEntityListener.class)
 public class User {
 
@@ -60,6 +61,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Solution> solutions;
+
+    @Builder.Default
+    private boolean isDeleted = false;
 
     public void updateUserInfo(String firstName, String lastName) {
         this.firstName = firstName;
