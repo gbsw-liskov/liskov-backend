@@ -34,9 +34,10 @@ public class UserService {
     public UserResponse updateUser(UserUpdateRequest request) {
         var user = getAuthenticatedUser();
 
-        user.setFirstName(request.firstName());
-        user.setLastName(request.lastName());
-        user.setUpdatedAt(LocalDateTime.now());
+        user.updateUserInfo(
+                request.firstName(),
+                request.lastName()
+        );
 
         var savedUser = userRepository.save(user);
         return UserResponse.from(savedUser);
@@ -50,8 +51,7 @@ public class UserService {
             throw new BadCredentialsException("현재 비밀번호가 일치하지 않습니다.");
         }
 
-        user.setPassword(passwordEncoder.encode(request.newPassword()));
-        user.setUpdatedAt(LocalDateTime.now());
+        user.updatePassword(passwordEncoder.encode(request.newPassword()));
 
         userRepository.save(user);
     }

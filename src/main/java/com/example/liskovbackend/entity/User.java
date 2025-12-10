@@ -15,7 +15,6 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -49,5 +48,16 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Property> properties;
+
+    public void updateUserInfo(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+        this.updatedAt = LocalDateTime.now();
+    }
 }
 
