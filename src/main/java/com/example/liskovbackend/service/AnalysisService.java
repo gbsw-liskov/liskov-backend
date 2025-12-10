@@ -4,16 +4,17 @@ import com.example.liskovbackend.dto.analysis.AiAnalyzeRequest;
 import com.example.liskovbackend.dto.analysis.AiAnalyzeResponse;
 import com.example.liskovbackend.dto.analysis.AnalyzeRequest;
 import com.example.liskovbackend.dto.analysis.AnalyzeResponse;
-import com.example.liskovbackend.entity.*;
+import com.example.liskovbackend.entity.Analysis;
+import com.example.liskovbackend.entity.AnalysisDetail;
+import com.example.liskovbackend.entity.Property;
+import com.example.liskovbackend.entity.Severity;
 import com.example.liskovbackend.global.exception.AiNoResponseException;
 import com.example.liskovbackend.global.exception.ExternalServiceException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.AnalysisRepository;
 import com.example.liskovbackend.repository.PropertyRepository;
-import com.example.liskovbackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -33,20 +34,16 @@ public class AnalysisService {
     private final PropertyRepository propertyRepository;
     private final AnalysisRepository analysisRepository;
     private final RestTemplate restTemplate;
-    private final UserRepository userRepository;
 
     private final String ANALYSIS_ENDPOINT = "/analyze";
 
     @Value("${ai.url}")
     private String aiUrl;
 
-    public AnalyzeResponse analyze(AnalyzeRequest request, List<MultipartFile> files, Long userId) {
+    public AnalyzeResponse analyze(AnalyzeRequest request, List<MultipartFile> files) {
 
-        var property = propertyRepository.findByIdAndUserId(request.propertyId(), userId)
+        var property = propertyRepository.findById(request.propertyId())
             .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
-
-        var user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
 
         var aiRequest = makeAiRequest(property, request, files);
 
@@ -60,16 +57,14 @@ public class AnalysisService {
             throw new AiNoResponseException("AI 서버가 응답할 수 없습니다.");
         }
 
-        var analysis = saveAnalysis(property, aiResponse, user);
-
-        user.updateAnalyze(analysis);
+        var analysis = saveAnalysis(property, aiResponse);
 
         return convertToResponse(analysis);
     }
 
     @Transactional(readOnly = true)
-    public AnalyzeResponse getAnalysis(Long id, Long userId) {
-        var analysis = analysisRepository.findByIdAndUserId(id, userId)
+    public AnalyzeResponse getAnalysis(Long id) {
+        var analysis = analysisRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("분석 결과를 찾을 수 없습니다."));
 
         return convertToResponse(analysis);
@@ -111,10 +106,9 @@ public class AnalysisService {
         }
     }
 
-    private Analysis saveAnalysis(Property p, AiAnalyzeResponse ai, User user) {
+    private Analysis saveAnalysis(Property p, AiAnalyzeResponse ai) {
 
         var analysis = Analysis.builder()
-            .user(user)
             .property(p)
             .totalRisk(ai.totalRisk())
             .summary(ai.summary()) // 저장됨

@@ -5,18 +5,21 @@ import com.example.liskovbackend.dto.gpt.request.GptSolutionGenerateRequest;
 import com.example.liskovbackend.dto.risk.solution.request.SolutionGenerateRequest;
 import com.example.liskovbackend.dto.risk.solution.response.CopingDto;
 import com.example.liskovbackend.dto.risk.solution.response.SolutionDetailResponse;
-import com.example.liskovbackend.entity.*;
+import com.example.liskovbackend.entity.Analysis;
+import com.example.liskovbackend.entity.Property;
+import com.example.liskovbackend.entity.Solution;
 import com.example.liskovbackend.global.exception.AiNoResponseException;
 import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
-import com.example.liskovbackend.repository.*;
+import com.example.liskovbackend.repository.AnalysisRepository;
+import com.example.liskovbackend.repository.PropertyRepository;
+import com.example.liskovbackend.repository.SolutionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,17 +28,12 @@ public class SolutionService {
     private final SolutionRepository solutionRepository;
     private final PropertyRepository propertyRepository;
     private final AnalysisRepository analysisRepository;
-    private final UserRepository userRepository;
     private final GptOssService gptOssService;
-    private final SolutionCopingRepository solutionCopingRepository;
 
     @Transactional
-    public SolutionDetailResponse generateSolution(SolutionGenerateRequest request, Long userId) {
-        var property = propertyRepository.findByIdAndUserId(request.getPropertyId(), userId)
+    public SolutionDetailResponse generateSolution(SolutionGenerateRequest request) {
+        var property = propertyRepository.findById(request.getPropertyId())
             .orElseThrow(() -> new ResourceNotFoundException("매물이 존재하지 않습니다."));
-
-        var user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("유저가 존재하지 않습니다."));
 
         var solution = solutionRepository.findByProperty(property);
 
@@ -78,30 +76,12 @@ public class SolutionService {
             throw new AiNoResponseException("대처방안이 생성되지 않았습니다.");
         }
 
-        var savedSolution = Solution.builder()
-                .property(property)
-                .copings(null)
-                .checklist(response.block().getChecklist())
-                .build();
-
-        List<SolutionCoping> savedSolutionCopings = response.block().getCoping().stream()
-                .map(coping -> SolutionCoping.builder()
-                        .title(coping.getTitle())
-                        .list(coping.getList())
-                        .build()
-                ).collect(Collectors.toList());
-
-        solutionCopingRepository.saveAll(savedSolutionCopings);
-
-        savedSolution.updateCopings(savedSolutionCopings);
-        solutionRepository.save(savedSolution);
-
         return response.block();
     }
 
     @Transactional(readOnly = true)
-    public SolutionDetailResponse getSolution(Long id, Long userId) {
-        var solution = solutionRepository.findByIdAndUserId(id, userId)
+    public SolutionDetailResponse getSolution(Long id) {
+        var solution = solutionRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("위험 매물 리포트를 찾을 수 없습니다."));
 
         return SolutionDetailResponse.builder()
