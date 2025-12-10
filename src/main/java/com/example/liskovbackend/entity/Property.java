@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @SQLRestriction("isDeleted = false")
-@SQLDelete(sql = "UPDATE properties SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE properties SET isDeleted = true WHERE id = ?")
 public class Property {
 
     @Id

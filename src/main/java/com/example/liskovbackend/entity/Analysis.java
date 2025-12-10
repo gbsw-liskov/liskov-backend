@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @SQLRestriction("isDeleted = false")
-@SQLDelete(sql = "UPDATE analyses SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE analyses SET isDeleted = true WHERE id = ?")
 public class Analysis {
 
     @Id

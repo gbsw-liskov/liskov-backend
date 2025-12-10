@@ -22,7 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @SQLRestriction("isDeleted = false")
-@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE users SET isDeleted = true WHERE id = ?")
 @EntityListeners(AuditingEntityListener.class)
 public class User {
 
