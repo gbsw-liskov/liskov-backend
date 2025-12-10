@@ -13,7 +13,6 @@ import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.ChecklistItemRepository;
 import com.example.liskovbackend.repository.ChecklistRepository;
 import com.example.liskovbackend.repository.PropertyRepository;
-import com.example.liskovbackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,60 +33,55 @@ public class ChecklistService {
     private final PropertyRepository propertyRepository;
     private final ChecklistItemRepository checklistItemRepository;
     private final GptOssService gptOssService;
-    private final UserRepository userRepository;
 
     @Transactional
-    public ChecklistGenerateResponse generateChecklist(ChecklistGenerateRequest request, Long userId) {
+    public ChecklistGenerateResponse generateChecklist(ChecklistGenerateRequest request) {
         var property = propertyRepository.findById(request.propertyId())
-            .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
 
         var gptRequest = GptChecklistGenerateRequest.builder()
-            .propertyId(property.getId())
-            .name(property.getName())
-            .address(property.getAddress())
-            .propertyType(property.getPropertyType())
-            .floor(property.getFloor())
-            .buildYear(property.getBuildYear())
-            .area(property.getArea())
-            .availableDate(property.getAvailableDate())
-            .build();
+                .propertyId(property.getId())
+                .name(property.getName())
+                .address(property.getAddress())
+                .propertyType(property.getPropertyType())
+                .floor(property.getFloor())
+                .buildYear(property.getBuildYear())
+                .area(property.getArea())
+                .availableDate(property.getAvailableDate())
+                .build();
 
-        var result = gptOssService.generateChecklist(gptRequest).block();
+        var response = gptOssService.generateChecklist(gptRequest);
 
-        if (result == null) {
+        if (response == null || response.block() == null) {
             throw new AiNoResponseException("체크리스트가 생성되지 않았습니다.");
         }
 
-        return result;
+        return response.block();
     }
 
     @Transactional
-    public ChecklistSaveResponse saveChecklist(ChecklistSaveRequest request, Long userId) {
-        var property = propertyRepository.findByIdAndUserId(request.propertyId(), userId)
-            .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
-
-        var user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
+    public ChecklistSaveResponse saveChecklist(ChecklistSaveRequest request) {
+        var property = propertyRepository.findById(request.propertyId())
+                .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
 
         if (property.getChecklists() != null) {
             throw new ResourceAlreadyExistsException("매물에 대한 체크리스트가 이미 존재합니다.");
         }
 
         var checklist = Checklist.builder()
-            .property(property)
-            .items(null)
-            .user(user)
-            .build();
+                .property(property)
+                .items(null)
+                .build();
 
         var itemsDto = request.items();
 
         var savedChecklistItems = itemsDto.stream()
-            .map(itemDto -> ChecklistItem.builder()
-                .checklist(checklist)
-                .content(itemDto.content())
-                .severity(itemDto.severity())
-                .build())
-            .collect(Collectors.toList());
+                .map(itemDto -> ChecklistItem.builder()
+                        .checklist(checklist)
+                        .content(itemDto.content())
+                        .severity(itemDto.severity())
+                        .build())
+                .collect(Collectors.toList());
 
         checklistItemRepository.saveAll(savedChecklistItems);
 
@@ -95,71 +89,84 @@ public class ChecklistService {
         Checklist savedChecklist = checklistRepository.save(checklist);
 
         return ChecklistSaveResponse.builder()
-            .checklistId(savedChecklist.getId())
-            .propertyId(property.getId())
-            .itemCount(savedChecklistItems.size())
-            .createdAt(savedChecklist.getCreatedAt())
-            .build();
+                .checklistId(savedChecklist.getId())
+                .propertyId(property.getId())
+                .itemCount(savedChecklistItems.size())
+                .createdAt(savedChecklist.getCreatedAt())
+                .build();
     }
 
     @Transactional(readOnly = true)
-    public ChecklistGetResponse getChecklistById(Long id, Long userId) {
-        var checklist = checklistRepository.findByIdAndUserId(id, userId)
-            .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
+    public ChecklistGetResponse getChecklistById(Long id) {
+        var checklist = checklistRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
+
+        if (checklist.getIsDeleted()) {
+            throw new ResourceNotFoundException("삭제된 체크리스트입니다.");
+        }
 
         var checklistItems = checklist.getItems();
 
         var items = checklistItems.stream()
-            .map(item -> ChecklistItemGetResponse.builder()
-                .itemId(item.getId())
-                .content(item.getContent())
-                .severity(item.getSeverity())
-                .memo(item.getMemo()).build()
-            ).collect(Collectors.toList());
+                .map(item -> ChecklistItemGetResponse.builder()
+                        .itemId(item.getId())
+                        .content(item.getContent())
+                        .severity(item.getSeverity())
+                        .memo(item.getMemo()).build()
+                ).collect(Collectors.toList());
 
         return ChecklistGetResponse.builder()
-            .checklistId(checklist.getId())
-            .propertyId(checklist.getProperty().getId())
-            .items(items)
-            .build();
+                .checklistId(checklist.getId())
+                .propertyId(checklist.getProperty().getId())
+                .items(items)
+                .build();
     }
 
     @Transactional(readOnly = true)
-    public List<AllChecklistGetResponse> getAllChecklist(Long userId) {
-        var allChecklists = checklistRepository.findAllByUserId(userId);
+    public List<AllChecklistGetResponse> getAllChecklist() {
+        var allChecklists = checklistRepository.findAll();
 
         return allChecklists.stream()
-            .map(checklist -> AllChecklistGetResponse.builder()
-                .checklistId(checklist.getId())
-                .propertyId(checklist.getProperty().getId())
-                .createdAt(checklist.getCreatedAt())
-                .itemCount(checklist.getItems().size())
-                .build()
-            ).collect(Collectors.toList());
+                .filter(checklist -> !checklist.getIsDeleted())
+                .map(checklist -> AllChecklistGetResponse.builder()
+                        .checklistId(checklist.getId())
+                        .propertyId(checklist.getProperty().getId())
+                        .createdAt(checklist.getCreatedAt())
+                        .itemCount(checklist.getItems().size())
+                        .build()
+                ).collect(Collectors.toList());
     }
 
     @Transactional
-    public void deleteChecklist(Long id, Long userId) {
-        var checklist = checklistRepository.findByIdAndUserId(id, userId)
-            .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
+    public void deleteChecklist(Long id) {
+        var checklist = checklistRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
 
-        checklistRepository.delete(checklist);
+        if (checklist.getIsDeleted()) {
+            throw new ResourceNotFoundException("이미 삭제된 체크리스트입니다.");
+        }
+
+        checklist.delete();
     }
 
     @Transactional
-    public ChecklistUpdateResponse updateChecklist(Long checklistId, List<ChecklistUpdateRequest> requests, Long userId) {
-        var checklist = checklistRepository.findByIdAndUserId(checklistId, userId)
-            .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다"));
+    public ChecklistUpdateResponse updateChecklist(Long checklistId, List<ChecklistUpdateRequest> requests) {
+        var checklist = checklistRepository.findById(checklistId)
+                .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다"));
+
+        if (checklist.getIsDeleted()) {
+            throw new ResourceNotFoundException("삭제된 체크리스트입니다.");
+        }
 
         var itemIds = requests.stream()
-            .map(ChecklistUpdateRequest::getItemId)
-            .toList();
+                .map(ChecklistUpdateRequest::getItemId)
+                .toList();
 
         var items = checklistItemRepository.findAllById(itemIds);
 
         var itemMap = items.stream()
-            .filter(item -> item.getChecklist().getId().equals(checklistId))
-            .collect(Collectors.toMap(ChecklistItem::getId, Function.identity()));
+                .filter(item -> item.getChecklist().getId().equals(checklistId))
+                .collect(Collectors.toMap(ChecklistItem::getId, Function.identity()));
 
         int changedCount = 0;
 
@@ -184,12 +191,11 @@ public class ChecklistService {
         }
 
         return ChecklistUpdateResponse.builder()
-            .checklistId(checklist.getId())
-            .propertyId(checklist.getProperty().getId())
-            .updatedItemCount(changedCount)
-            .updatedAt(LocalDateTime.now())
-            .build();
+                .checklistId(checklist.getId())
+                .propertyId(checklist.getProperty().getId())
+                .updatedItemCount(changedCount)
+                .updatedAt(LocalDateTime.now())
+                .build();
     }
 }
-
 
