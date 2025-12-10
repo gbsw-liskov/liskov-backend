@@ -2,6 +2,9 @@ package com.example.liskovbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.SoftDelete;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -58,5 +61,9 @@ public class ChecklistItem {
 
     public void updateSeverity(Severity severity) {
         this.severity=severity;
+    }
+
+    public void updateChecklist(Checklist otherChecklist) {
+        this.checklist = otherChecklist;
     }
 }

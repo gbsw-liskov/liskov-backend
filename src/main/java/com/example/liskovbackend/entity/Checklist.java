@@ -2,6 +2,12 @@ package com.example.liskovbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.SoftDelete;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,6 +15,8 @@ import java.util.List;
 @Table(name = "checklists")
 @Getter
 @NoArgsConstructor @AllArgsConstructor @Builder
+@SQLRestriction("isDeleted = false")
+@SQLDelete(sql = "UPDATE checklists SET isDeleted = true WHERE id = ?")
 public class Checklist {
 
     @Id
@@ -19,36 +27,23 @@ public class Checklist {
     @JoinColumn(name = "property_id", nullable = false)
     private Property property;
 
-//    @Column(columnDefinition = "TEXT")
-//    private String description;
-
-    @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted;
-
+    @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL)
     private List<ChecklistItem> items;
 
-    public void delete() {
-        isDeleted = true;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @PrePersist
-    public void prePersist() {
-        isDeleted = false;
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+    @Builder.Default
+    private boolean isDeleted = false;
 
     public void updateItems(List<ChecklistItem> savedChecklistItems) {
         this.items = savedChecklistItems;

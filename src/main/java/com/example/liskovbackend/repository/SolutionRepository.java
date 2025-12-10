@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface SolutionRepository extends JpaRepository<Solution, Long> {
     Solution findByProperty(Property property);
+
+    Optional<Solution> findByIdAndUserId(Long id, Long userId);
 }
