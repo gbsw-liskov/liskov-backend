@@ -8,6 +8,4 @@ import java.util.Optional;
 
 public interface AnalysisRepository extends JpaRepository<Analysis, Long> {
     Optional<Analysis> findByProperty(Property property);
-
-    Optional<Analysis> findByIdAndUserId(Long id, Long userId);
 }

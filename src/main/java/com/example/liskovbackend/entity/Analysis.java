@@ -2,11 +2,6 @@ package com.example.liskovbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
-import org.hibernate.annotations.SoftDelete;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,8 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@SQLRestriction("is_deleted = false")
-@SQLDelete(sql = "UPDATE analyses SET is_deleted = true WHERE id = ?")
 public class Analysis {
 
     @Id
@@ -38,20 +31,26 @@ public class Analysis {
     @OneToMany(mappedBy = "analysis", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnalysisDetail> details;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted;
 
-    @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Builder.Default
-    private boolean isDeleted = false;
+    @PrePersist
+    public void prePersist() {
+        isDeleted = false;
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
     public void updateDetails(List<AnalysisDetail> details) {
         this.details = details;

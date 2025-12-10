@@ -2,11 +2,6 @@ package com.example.liskovbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
-import org.hibernate.annotations.SoftDelete;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,8 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@SQLRestriction("is_deleted = false")
-@SQLDelete(sql = "UPDATE properties SET is_deleted = true WHERE id = ?")
 public class Property {
 
     @Id
@@ -57,11 +50,12 @@ public class Property {
     @Column(name = "monthly_rent")
     private Integer monthlyRent;
 
-    @CreatedDate
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -74,7 +68,20 @@ public class Property {
     @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private Solution solution;
 
-    @Builder.Default
-    private boolean isDeleted = false;
+    @PrePersist
+    public void prePersist() {
+        isDeleted = false;
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    public void delete() {
+        this.isDeleted = true;
+    }
 }
 

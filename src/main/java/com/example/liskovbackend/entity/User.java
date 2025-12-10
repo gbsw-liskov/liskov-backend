@@ -2,10 +2,7 @@ package com.example.liskovbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.SoftDelete;
-import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -21,8 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@SQLRestriction("is_deleted = false")
-@SQLDelete(sql = "UPDATE users SET is_deleted = true WHERE id = ?")
+@SoftDelete(columnName = "is_deleted")
 @EntityListeners(AuditingEntityListener.class)
 public class User {
 
@@ -53,18 +49,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Property> properties;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Checklist> checklists;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Analysis> analyses;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Solution> solutions;
-
-    @Builder.Default
-    private boolean isDeleted = false;
-
     public void updateUserInfo(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -74,10 +58,6 @@ public class User {
     public void updatePassword(String password) {
         this.password = password;
         this.updatedAt = LocalDateTime.now();
-    }
-
-    public void updateAnalyze(Analysis analysis) {
-        this.analyses.add(analysis);
     }
 }
 
