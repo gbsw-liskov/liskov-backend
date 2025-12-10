@@ -6,6 +6,7 @@ import com.example.liskovbackend.dto.auth.request.RefreshRequest;
 import com.example.liskovbackend.dto.auth.request.SignupRequest;
 import com.example.liskovbackend.dto.auth.response.AuthResponse;
 import com.example.liskovbackend.entity.User;
+import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
 import com.example.liskovbackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,7 +27,7 @@ public class AuthService {
     @Transactional
     public void signup(SignupRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("이미 등록된 이메일입니다.");
+            throw new ResourceAlreadyExistsException("이미 등록된 이메일입니다.");
         }
 
         var user = User.builder()

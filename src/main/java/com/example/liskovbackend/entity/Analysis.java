@@ -9,7 +9,6 @@ import java.util.List;
 @Entity
 @Table(name = "analyses")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -51,5 +50,9 @@ public class Analysis {
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public void updateDetails(List<AnalysisDetail> details) {
+        this.details = details;
     }
 }

@@ -1,14 +1,12 @@
 package com.example.liskovbackend.service;
 
 import com.example.liskovbackend.dto.checklist.request.ChecklistGenerateRequest;
-import com.example.liskovbackend.dto.checklist.request.ChecklistItemsSaveRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistSaveRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistUpdateRequest;
 import com.example.liskovbackend.dto.checklist.response.*;
 import com.example.liskovbackend.dto.gpt.request.GptChecklistGenerateRequest;
 import com.example.liskovbackend.entity.Checklist;
 import com.example.liskovbackend.entity.ChecklistItem;
-import com.example.liskovbackend.entity.Property;
 import com.example.liskovbackend.global.exception.AiNoResponseException;
 import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
@@ -87,7 +85,7 @@ public class ChecklistService {
 
         checklistItemRepository.saveAll(savedChecklistItems);
 
-        checklist.setItems(savedChecklistItems);
+        checklist.updateItems(savedChecklistItems);
         Checklist savedChecklist = checklistRepository.save(checklist);
 
         return ChecklistSaveResponse.builder()
@@ -181,11 +179,11 @@ public class ChecklistService {
             boolean changed = false;
 
             if (!Objects.equals(item.getMemo(), req.getMemo())) {
-                item.setMemo(req.getMemo());
+                item.updateMemo(req.getMemo());
                 changed = true;
             }
             if (!Objects.equals(item.getSeverity(), req.getSeverity())) {
-                item.setSeverity(req.getSeverity());
+                item.updateSeverity(req.getSeverity());
                 changed = true;
             }
 

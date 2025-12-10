@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "checklist_items")
-@Getter @Setter
+@Getter
 @NoArgsConstructor @AllArgsConstructor @Builder
 public class ChecklistItem {
 
@@ -50,5 +50,13 @@ public class ChecklistItem {
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public void updateMemo(String memo) {
+        this.memo = memo;
+    }
+
+    public void updateSeverity(Severity severity) {
+        this.severity=severity;
     }
 }

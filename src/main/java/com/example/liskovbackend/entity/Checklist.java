@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "checklists")
-@Getter @Setter
+@Getter
 @NoArgsConstructor @AllArgsConstructor @Builder
 public class Checklist {
 
@@ -48,6 +48,10 @@ public class Checklist {
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public void updateItems(List<ChecklistItem> savedChecklistItems) {
+        this.items = savedChecklistItems;
     }
 }
 
