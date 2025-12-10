@@ -15,8 +15,8 @@ import java.util.List;
 @Table(name = "checklists")
 @Getter
 @NoArgsConstructor @AllArgsConstructor @Builder
-@SQLRestriction("isDeleted = false")
-@SQLDelete(sql = "UPDATE checklists SET isDeleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
+@SQLDelete(sql = "UPDATE checklists SET is_deleted = true WHERE id = ?")
 public class Checklist {
 
     @Id
