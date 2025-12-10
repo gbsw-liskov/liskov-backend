@@ -1,14 +1,12 @@
 package com.example.liskovbackend.service;
 
 import com.example.liskovbackend.dto.checklist.request.ChecklistGenerateRequest;
-import com.example.liskovbackend.dto.checklist.request.ChecklistItemsSaveRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistSaveRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistUpdateRequest;
 import com.example.liskovbackend.dto.checklist.response.*;
 import com.example.liskovbackend.dto.gpt.request.GptChecklistGenerateRequest;
 import com.example.liskovbackend.entity.Checklist;
 import com.example.liskovbackend.entity.ChecklistItem;
-import com.example.liskovbackend.entity.Property;
 import com.example.liskovbackend.global.exception.AiNoResponseException;
 import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;

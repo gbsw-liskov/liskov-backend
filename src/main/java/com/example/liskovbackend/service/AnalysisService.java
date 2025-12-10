@@ -9,6 +9,7 @@ import com.example.liskovbackend.entity.AnalysisDetail;
 import com.example.liskovbackend.entity.Property;
 import com.example.liskovbackend.entity.Severity;
 import com.example.liskovbackend.global.exception.AiNoResponseException;
+import com.example.liskovbackend.global.exception.ExternalServiceException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.AnalysisRepository;
 import com.example.liskovbackend.repository.PropertyRepository;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -99,8 +101,8 @@ public class AnalysisService {
                 file.getContentType(),
                 encoded
             );
-        } catch (Exception e) {
-            throw new RuntimeException("파일 인코딩이 실패했습니다.");
+        } catch (IOException e) {
+            throw new ExternalServiceException("파일 인코딩이 실패했습니다.");
         }
     }
 
