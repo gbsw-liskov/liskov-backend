@@ -1,7 +1,6 @@
 package com.example.liskovbackend.controller;
 
 import com.example.liskovbackend.common.util.ApiResponse;
-import com.example.liskovbackend.common.util.UserUtils;
 import com.example.liskovbackend.dto.analysis.AnalyzeRequest;
 import com.example.liskovbackend.dto.analysis.AnalyzeResponse;
 import com.example.liskovbackend.service.AnalysisService;
@@ -18,7 +17,6 @@ import java.util.List;
 public class AnalysisController {
 
     private final AnalysisService analysisService;
-    private final UserUtils userUtils;
 
     // 매물 분석
     @PostMapping
@@ -26,16 +24,14 @@ public class AnalysisController {
         @RequestPart("request") AnalyzeRequest request,
         @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
-        var userId = userUtils.getCurrentUserId();
-        var response = analysisService.analyze(request, files, userId);
+        var response = analysisService.analyze(request, files);
         return ApiResponse.ok(response);
     }
 
     // 매물 분석 조회
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<AnalyzeResponse>> getAnalysis(@PathVariable Long id) {
-        var userId = userUtils.getCurrentUserId();
-        var response = analysisService.getAnalysis(id, userId);
+        var response = analysisService.getAnalysis(id);
         return ApiResponse.ok(response);
     }
 }
