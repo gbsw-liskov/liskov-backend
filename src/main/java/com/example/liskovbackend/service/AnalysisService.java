@@ -121,7 +121,7 @@ public class AnalysisService {
                 .build())
             .toList();
 
-        analysis.setDetails(details);
+        analysis.updateDetails(details);
 
         return analysisRepository.save(analysis);
     }

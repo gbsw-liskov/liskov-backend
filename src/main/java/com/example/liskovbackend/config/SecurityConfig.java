@@ -1,9 +1,11 @@
 package com.example.liskovbackend.config;
 
 import com.example.liskovbackend.common.security.JwtAuthenticationFilter;
+import com.example.liskovbackend.common.util.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;

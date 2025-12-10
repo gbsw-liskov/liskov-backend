@@ -87,7 +87,7 @@ public class ChecklistService {
 
         checklistItemRepository.saveAll(savedChecklistItems);
 
-        checklist.setItems(savedChecklistItems);
+        checklist.updateItems(savedChecklistItems);
         Checklist savedChecklist = checklistRepository.save(checklist);
 
         return ChecklistSaveResponse.builder()
@@ -181,11 +181,11 @@ public class ChecklistService {
             boolean changed = false;
 
             if (!Objects.equals(item.getMemo(), req.getMemo())) {
-                item.setMemo(req.getMemo());
+                item.updateMemo(req.getMemo());
                 changed = true;
             }
             if (!Objects.equals(item.getSeverity(), req.getSeverity())) {
-                item.setSeverity(req.getSeverity());
+                item.updateSeverity(req.getSeverity());
                 changed = true;
             }
 

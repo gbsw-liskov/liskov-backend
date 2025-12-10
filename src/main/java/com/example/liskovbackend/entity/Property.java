@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "properties")
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -78,6 +78,10 @@ public class Property {
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public void delete() {
+        this.isDeleted = true;
     }
 }
 
