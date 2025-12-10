@@ -38,7 +38,7 @@ public class ChecklistService {
 
     @Transactional
     public ChecklistGenerateResponse generateChecklist(ChecklistGenerateRequest request, Long userId) {
-        var property = propertyRepository.findByIdAndUserIdAndIsDeletedFalse(request.propertyId(), userId)
+        var property = propertyRepository.findByIdAndUserId(request.propertyId(), userId)
             .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
 
         var gptRequest = GptChecklistGenerateRequest.builder()
@@ -63,10 +63,10 @@ public class ChecklistService {
 
     @Transactional
     public ChecklistSaveResponse saveChecklist(ChecklistSaveRequest request, Long userId) {
-        var property = propertyRepository.findByIdAndUserIdAndIsDeletedFalse(request.propertyId(), userId)
+        var property = propertyRepository.findByIdAndUserId(request.propertyId(), userId)
             .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
 
-        var user = userRepository.findByIdAndIsDeletedFalse(userId)
+        var user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
 
         if (property.getChecklists() != null) {
@@ -104,7 +104,7 @@ public class ChecklistService {
 
     @Transactional(readOnly = true)
     public ChecklistGetResponse getChecklistById(Long id, Long userId) {
-        var checklist = checklistRepository.findByIdAndUserIdAndIsDeletedFalse(id, userId)
+        var checklist = checklistRepository.findByIdAndUserId(id, userId)
             .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
 
         var checklistItems = checklist.getItems();
@@ -126,10 +126,9 @@ public class ChecklistService {
 
     @Transactional(readOnly = true)
     public List<AllChecklistGetResponse> getAllChecklist(Long userId) {
-        var allChecklists = checklistRepository.findAllByUserIdAndIsDeletedFalse(userId);
+        var allChecklists = checklistRepository.findAllByUserId(userId);
 
         return allChecklists.stream()
-            .filter(checklist -> !checklist.getIsDeleted())
             .map(checklist -> AllChecklistGetResponse.builder()
                 .checklistId(checklist.getId())
                 .propertyId(checklist.getProperty().getId())
@@ -141,19 +140,15 @@ public class ChecklistService {
 
     @Transactional
     public void deleteChecklist(Long id, Long userId) {
-        var checklist = checklistRepository.findByIdAndUserIdAndIsDeletedFalse(id, userId)
+        var checklist = checklistRepository.findByIdAndUserId(id, userId)
             .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
 
-        if (checklist.getIsDeleted()) {
-            throw new ResourceNotFoundException("이미 삭제된 체크리스트입니다.");
-        }
-
-        checklist.delete();
+        checklistRepository.delete(checklist);
     }
 
     @Transactional
     public ChecklistUpdateResponse updateChecklist(Long checklistId, List<ChecklistUpdateRequest> requests, Long userId) {
-        var checklist = checklistRepository.findByIdAndUserIdAndIsDeletedFalse(checklistId, userId)
+        var checklist = checklistRepository.findByIdAndUserId(checklistId, userId)
             .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다"));
 
         var itemIds = requests.stream()

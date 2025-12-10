@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface SolutionRepository extends JpaRepository<Solution, Long> {
     Solution findByProperty(Property property);
 
-    Optional<Solution> findByIdAndUserIdAndIsDeletedFalse(Long id, Long userId);
+    Optional<Solution> findByIdAndUserId(Long id, Long userId);
 }

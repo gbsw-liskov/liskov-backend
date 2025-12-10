@@ -42,8 +42,7 @@ public class PropertyService {
     public void deleteProperty(Long id, Long userId) {
         Property property = propertyRepository.findByIdAndUserId(id, userId)
             .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
-        property.delete();
-        propertyRepository.save(property);
+        propertyRepository.delete(property);
     }
 
     @Transactional

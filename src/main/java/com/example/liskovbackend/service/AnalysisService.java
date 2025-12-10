@@ -42,10 +42,10 @@ public class AnalysisService {
 
     public AnalyzeResponse analyze(AnalyzeRequest request, List<MultipartFile> files, Long userId) {
 
-        var property = propertyRepository.findByIdAndUserIdAndIsDeletedFalse(request.propertyId(), userId)
+        var property = propertyRepository.findByIdAndUserId(request.propertyId(), userId)
             .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
 
-        var user = userRepository.findByIdAndIsDeletedFalse(userId)
+        var user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
 
         var aiRequest = makeAiRequest(property, request, files);
@@ -69,7 +69,7 @@ public class AnalysisService {
 
     @Transactional(readOnly = true)
     public AnalyzeResponse getAnalysis(Long id, Long userId) {
-        var analysis = analysisRepository.findByIdAndUserIdAndIsDeletedFalse(id, userId)
+        var analysis = analysisRepository.findByIdAndUserId(id, userId)
             .orElseThrow(() -> new ResourceNotFoundException("분석 결과를 찾을 수 없습니다."));
 
         return convertToResponse(analysis);

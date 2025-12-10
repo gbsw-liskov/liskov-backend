@@ -2,7 +2,9 @@ package com.example.liskovbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -19,6 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @SoftDelete(columnName = "is_deleted")
+@SQLRestriction("is_deleted = false")
 @EntityListeners(AuditingEntityListener.class)
 public class User {
 

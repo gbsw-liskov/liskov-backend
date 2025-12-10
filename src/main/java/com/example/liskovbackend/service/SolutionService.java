@@ -31,10 +31,10 @@ public class SolutionService {
 
     @Transactional
     public SolutionDetailResponse generateSolution(SolutionGenerateRequest request, Long userId) {
-        var property = propertyRepository.findByIdAndUserIdAndIsDeletedFalse(request.getPropertyId(), userId)
+        var property = propertyRepository.findByIdAndUserId(request.getPropertyId(), userId)
             .orElseThrow(() -> new ResourceNotFoundException("매물이 존재하지 않습니다."));
 
-        var user = userRepository.findByIdAndIsDeletedFalse(userId)
+        var user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("유저가 존재하지 않습니다."));
 
         var solution = solutionRepository.findByProperty(property);
@@ -101,7 +101,7 @@ public class SolutionService {
 
     @Transactional(readOnly = true)
     public SolutionDetailResponse getSolution(Long id, Long userId) {
-        var solution = solutionRepository.findByIdAndUserIdAndIsDeletedFalse(id, userId)
+        var solution = solutionRepository.findByIdAndUserId(id, userId)
             .orElseThrow(() -> new ResourceNotFoundException("위험 매물 리포트를 찾을 수 없습니다."));
 
         return SolutionDetailResponse.builder()

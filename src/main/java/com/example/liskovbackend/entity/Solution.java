@@ -2,6 +2,8 @@ package com.example.liskovbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.SoftDelete;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,6 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@SoftDelete(columnName = "is_deleted")
+@SQLRestriction("is_deleted = false")
 public class Solution {
 
     @Id
@@ -31,9 +35,6 @@ public class Solution {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted;
-
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
@@ -42,7 +43,6 @@ public class Solution {
 
     @PrePersist
     public void prePersist() {
-        isDeleted = false;
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }

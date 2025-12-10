@@ -2,6 +2,8 @@ package com.example.liskovbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.SoftDelete;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,6 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@SoftDelete(columnName = "is_deleted")
+@SQLRestriction("is_deleted = false")
 public class Property {
 
     @Id
@@ -50,9 +54,6 @@ public class Property {
     @Column(name = "monthly_rent")
     private Integer monthlyRent;
 
-    @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted;
-
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
@@ -70,7 +71,6 @@ public class Property {
 
     @PrePersist
     public void prePersist() {
-        isDeleted = false;
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
@@ -78,10 +78,6 @@ public class Property {
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
-    }
-
-    public void delete() {
-        this.isDeleted = true;
     }
 }
 

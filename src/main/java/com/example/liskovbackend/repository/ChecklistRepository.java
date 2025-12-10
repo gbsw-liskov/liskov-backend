@@ -7,11 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ChecklistRepository extends JpaRepository<Checklist, Long> {
+
     List<Checklist> findAllByUserId(Long userId);
 
-    Optional<Checklist> findByIdAndIsDeletedFalse(Long id);
-
-    List<Checklist> findAllByUserIdAndIsDeletedFalse(Long userId);
-
-    Optional<Checklist> findByIdAndUserIdAndIsDeletedFalse(Long id, Long userId);
+    Optional<Checklist> findByIdAndUserId(Long id, Long userId);
 }
