@@ -14,7 +14,7 @@ Content-Type: {{contentType}}
 }
 
 ### 로그인 후 얻은 액세스 토큰을 아래 변수에 설정하세요
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+@accessToken = eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInN1YiI6IjEiLCJpYXQiOjE3NjUyOTUxNjUsImV4cCI6MTc2NTI5ODc2NX0.J5BqVL78W2rA9PoZw7tZGRHhM2jiFLV7jjl74BX-klA
 
 ### 2. 로그인 (Login)
 POST {{baseUrl}}/login

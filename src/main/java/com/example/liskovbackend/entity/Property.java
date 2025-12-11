@@ -25,6 +25,7 @@ public class Property {
     private User user;
 
     private String name;
+    
     private String address;
 
     @Enumerated(EnumType.STRING)
@@ -33,20 +34,24 @@ public class Property {
 
     private Integer floor;
 
-    @Column(name = "build_year")
-    private Integer buildYear;
+    @Column(name = "built_year")
+    private Integer builtYear;
 
+    // 면적(단위: 평)
     @Column(precision = 5, scale = 2)
     private BigDecimal area;
 
-    @Column(name = "available_date")
-    private LocalDate availableDate;
-
+    // 시세
     @Column(name = "market_price")
     private Integer marketPrice;
 
+    // 임대 종류
+    private LeaseType leaseType;
+
+    // 보증금(=전세)
     private Integer deposit;
 
+    // 월세, 전세일 경우 0
     @Column(name = "monthly_rent")
     private Integer monthlyRent;
 

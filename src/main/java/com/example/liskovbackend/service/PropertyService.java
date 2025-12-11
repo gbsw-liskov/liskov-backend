@@ -3,6 +3,7 @@ package com.example.liskovbackend.service;
 import com.example.liskovbackend.dto.property.PropertyCreateRequest;
 import com.example.liskovbackend.dto.property.PropertyDetail;
 import com.example.liskovbackend.dto.property.PropertySummary;
+import com.example.liskovbackend.entity.LeaseType;
 import com.example.liskovbackend.entity.Property;
 import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
@@ -24,11 +25,7 @@ public class PropertyService {
     @Transactional(readOnly = true)
     public List<PropertySummary> findAllProperties(Long userId) {
         return propertyRepository.findAllActiveByUserId(userId).stream()
-            .map(property -> PropertySummary.builder()
-                .propertyId(property.getId())
-                .name(property.getName())
-                .address(property.getAddress())
-                .build())
+            .map(PropertySummary::from)
             .toList();
     }
 
@@ -41,7 +38,7 @@ public class PropertyService {
 
     @Transactional
     public void deleteProperty(Long id, Long userId) {
-        Property property = propertyRepository.findByIdAndUserId(id, userId)
+        var property = propertyRepository.findByIdAndUserId(id, userId)
             .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
         property.delete();
         propertyRepository.save(property);
@@ -61,9 +58,12 @@ public class PropertyService {
             .address(request.getAddress())
             .propertyType(request.getPropertyType())
             .floor(request.getFloor())
-            .buildYear(request.getBuiltYear())
+            .builtYear(request.getBuiltYear())
             .area(request.getArea())
-            .availableDate(request.getAvailableDate())
+            .deposit(request.getDeposit())
+            .monthlyRent(request.getMonthlyRent())
+            .marketPrice(request.getMarketPrice())
+            .leaseType(LeaseType.valueOf(request.getLeaseType()))
             .user(user)
             .build();
 

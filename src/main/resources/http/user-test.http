@@ -1,7 +1,7 @@
 ### Environment variables
 @baseUrl = http://localhost:8080/api
 @contentType = application/json
-@authToken = eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiIxIiwiaWF0IjoxNzY0ODA4NDIyLCJleHAiOjE3NjQ4MTIwMjJ9.1XXoJK4tpeTg3C6NQRbiLL3y2UUu7w-j3hcXsHHpWrg
+@authToken = eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInN1YiI6IjEiLCJpYXQiOjE3NjUyOTU2MDIsImV4cCI6MTc2NTI5OTIwMn0.-gVgOARQV-zHZ8zmU361-QNUkq-yAPXEMLz-Ijp4x3M
 
 ### 1. 현재 로그인된 사용자 정보 조회
 GET {{baseUrl}}/user/me
@@ -15,7 +15,7 @@ Authorization: Bearer {{authToken}}
 
 {
   "firstName": "홍",
-  "lastName": "길동"
+  "lastName": "길동동"
 }
 
 ### 3. 비밀번호 변경

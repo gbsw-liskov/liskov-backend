@@ -17,5 +17,8 @@ public class PropertyCreateRequest {
     private Integer floor;
     private Integer builtYear;
     private BigDecimal area;
-    private LocalDate availableDate;
+    private Integer marketPrice;
+    private String leaseType;
+    private Integer deposit;
+    private Integer monthlyRent;
 }
