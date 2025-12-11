@@ -5,6 +5,7 @@ import com.example.liskovbackend.dto.property.PropertyDetail;
 import com.example.liskovbackend.dto.property.PropertySummary;
 import com.example.liskovbackend.entity.LeaseType;
 import com.example.liskovbackend.entity.Property;
+import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.PropertyRepository;
 import com.example.liskovbackend.repository.UserRepository;
@@ -47,6 +48,10 @@ public class PropertyService {
     public PropertyDetail saveProperty(PropertyCreateRequest request, Long userId) {
         var user = userRepository.findById(userId)
             .orElseThrow(() -> new ResourceNotFoundException("유저를 찾을 수 없습니다."));
+
+        if (propertyRepository.existsByUserIdAndName(userId, request.getName())) {
+            throw new ResourceAlreadyExistsException("이미 동일한 이름의 매물이 존재합니다.");
+        }
 
         var property = Property.builder()
             .name(request.getName())
