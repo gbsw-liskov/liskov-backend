@@ -45,9 +45,8 @@ public class ChecklistService {
                 .address(property.getAddress())
                 .propertyType(property.getPropertyType())
                 .floor(property.getFloor())
-                .buildYear(property.getBuildYear())
+                .builtYear(property.getBuiltYear())
                 .area(property.getArea())
-                .availableDate(property.getAvailableDate())
                 .build();
 
         var response = gptOssService.generateChecklist(gptRequest);

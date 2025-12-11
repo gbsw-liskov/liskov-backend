@@ -16,7 +16,7 @@ public class GptSolutionGenerateRequest {
     private String address;
     private PropertyType propertyType;
     private Integer floor;
-    private Integer buildYear;
+    private Integer builtYear;
     private BigDecimal area;
     private LocalDate availableDate;
     private Integer marketPrice;
