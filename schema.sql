@@ -20,7 +20,7 @@ CREATE TABLE properties (
     address VARCHAR(255) NOT NULL,  -- 주소
     property_type ENUM('APARTMENT', 'VILLA', 'OFFICETEL', 'ONE_ROOM', 'OTHER') NOT NULL,
     floor VARCHAR(20),
-    build_year INT,
+    built_year INT,
     area DECIMAL(5,2),              -- 면적 (제곱미터)
     available_date DATE,
 

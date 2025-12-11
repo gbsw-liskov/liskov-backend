@@ -58,14 +58,11 @@ public class SolutionService {
             .address(property.getAddress())
             .propertyType(property.getPropertyType())
             .floor(property.getFloor())
-            .buildYear(property.getBuildYear())
+            .builtYear(property.getBuiltYear())
             .area(property.getArea())
-            .availableDate(property.getAvailableDate())
-
             .marketPrice(request.getMarketPrice())
             .deposit(request.getDeposit())
             .monthlyRent(request.getMonthlyRent())
-
             .totalRisk(analysis.getTotalRisk())
             .summary(analysis.getSummary())
             .details(detailDto)

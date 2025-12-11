@@ -21,7 +21,7 @@ public class PropertyDetail {
     private String address;
     private String propertyType;
     private Integer floor;
-    private Integer buildYear;
+    private Integer builtYear;
     private BigDecimal area;
     private Integer deposit;
     private Integer monthlyRent;
@@ -34,7 +34,7 @@ public class PropertyDetail {
             .address(property.getAddress())
             .propertyType(property.getPropertyType().name())
             .floor(property.getFloor())
-            .buildYear(property.getBuiltYear())
+            .builtYear(property.getBuiltYear())
             .area(property.getArea())
             .deposit(property.getDeposit())
             .monthlyRent(property.getMonthlyRent())

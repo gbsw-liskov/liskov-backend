@@ -8,9 +8,8 @@ public record AiAnalyzeRequest(
     String address,
     String propertyType,
     Integer floor,
-    Integer buildYear,
+    Integer builtYear,
     Double area,
-    String availableDate,
 
     Double marketPrice,
     Double deposit,

@@ -15,7 +15,7 @@ public class GptChecklistGenerateRequest {
     private String address;
     private PropertyType propertyType;
     private Integer floor;
-    private Integer buildYear;
+    private Integer builtYear;
     private BigDecimal area;
     private LocalDate availableDate;
 }
