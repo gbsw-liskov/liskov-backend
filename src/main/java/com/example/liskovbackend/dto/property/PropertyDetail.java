@@ -23,7 +23,8 @@ public class PropertyDetail {
     private Integer floor;
     private Integer buildYear;
     private BigDecimal area;
-    private LocalDate availableDate;
+    private Integer deposit;
+    private Integer monthlyRent;
     private LocalDateTime createdAt;
 
     public static PropertyDetail from(Property property) {
@@ -33,9 +34,10 @@ public class PropertyDetail {
             .address(property.getAddress())
             .propertyType(property.getPropertyType().name())
             .floor(property.getFloor())
-            .buildYear(property.getBuildYear())
+            .buildYear(property.getBuiltYear())
             .area(property.getArea())
-            .availableDate(property.getAvailableDate())
+            .deposit(property.getDeposit())
+            .monthlyRent(property.getMonthlyRent())
             .createdAt(property.getCreatedAt())
             .build();
     }
