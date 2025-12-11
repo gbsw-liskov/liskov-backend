@@ -20,4 +20,6 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     // userId 기준 특정 매물 조회
     @Query("SELECT p FROM Property p WHERE p.id = :id AND p.user.id = :userId AND p.isDeleted = false")
     Optional<Property> findByIdAndUserId(Long id, Long userId);
+
+    boolean existsByUserIdAndName(Long userId, String name);
 }
