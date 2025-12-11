@@ -1,0 +1,39 @@
+name: Deploy
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install sshpass
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+
+      - name: Deploy to EC2
+        run: |
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '
+            set -euo pipefail
+
+            echo "[1] Kill process on port 8080"
+            sudo lsof -t -i:8080 | xargs -r sudo kill -9 || true
+
+            echo "[2] Move into project directory"
+            cd liskov-backend
+
+            echo "[3] Git pull"
+            git pull
+
+            echo "[4] Build"
+            ./gradlew clean build -x test
+
+            echo "[5] Restart JAR"
+            sudo nohup java -jar build/libs/liskov-backend-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+          '
