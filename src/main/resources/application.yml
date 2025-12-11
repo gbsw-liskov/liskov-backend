@@ -19,7 +19,7 @@ logging:
     org.hibernate.SQL: debug
 
 ai:
-  url: http://ai.zipchak-backend.kro.kr:8080
+  url: http://zipchak.yjm.ai:8080
 
 cors:
   allowed-origins:

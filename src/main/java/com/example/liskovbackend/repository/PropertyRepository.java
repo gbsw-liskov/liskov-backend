@@ -21,4 +21,5 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     @Query("SELECT p FROM Property p WHERE p.id = :id AND p.user.id = :userId AND p.isDeleted = false")
     Optional<Property> findByIdAndUserId(Long id, Long userId);
 
+    boolean existsByUserIdAndName(Long userId, String name);
 }
