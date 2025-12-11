@@ -123,11 +123,12 @@ public class ChecklistService {
     }
 
     @Transactional(readOnly = true)
-    public List<AllChecklistGetResponse> getAllChecklist() {
+    public List<AllChecklistGetResponse> getAllChecklist(Long userId) {
         var allChecklists = checklistRepository.findAll();
 
         return allChecklists.stream()
                 .filter(checklist -> !checklist.getIsDeleted())
+                .filter(checklist -> checklist.getProperty().getUser().getId().equals(userId))
                 .map(checklist -> AllChecklistGetResponse.builder()
                         .checklistId(checklist.getId())
                         .propertyId(checklist.getProperty().getId())
@@ -138,24 +139,23 @@ public class ChecklistService {
     }
 
     @Transactional
-    public void deleteChecklist(Long id) {
-        var checklist = checklistRepository.findById(id)
+    public void deleteChecklist(Long id, Long userId) {
+        var checklist = checklistRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
 
-        if (checklist.getIsDeleted()) {
-            throw new ResourceNotFoundException("이미 삭제된 체크리스트입니다.");
+        if(checklist.getProperty().getUser().getId().equals(userId)){
+            throw new ResourceNotFoundException("체크리스트가 존재하지 않습니다.");
         }
-
         checklist.delete();
     }
 
     @Transactional
-    public ChecklistUpdateResponse updateChecklist(Long checklistId, List<ChecklistUpdateRequest> requests) {
-        var checklist = checklistRepository.findById(checklistId)
+    public ChecklistUpdateResponse updateChecklist(Long checklistId, List<ChecklistUpdateRequest> requests, Long userId) {
+        var checklist = checklistRepository.findByIdAndIsDeletedFalse(checklistId)
                 .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다"));
 
-        if (checklist.getIsDeleted()) {
-            throw new ResourceNotFoundException("삭제된 체크리스트입니다.");
+        if(checklist.getProperty().getUser().getId().equals(userId)){
+            throw new ResourceNotFoundException("체크리스트가 존재하지 않습니다.");
         }
 
         var itemIds = requests.stream()

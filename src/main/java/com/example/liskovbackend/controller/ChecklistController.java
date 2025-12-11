@@ -1,6 +1,7 @@
 package com.example.liskovbackend.controller;
 
 import com.example.liskovbackend.common.util.ApiResponse;
+import com.example.liskovbackend.common.util.UserUtils;
 import com.example.liskovbackend.dto.checklist.request.ChecklistGenerateRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistSaveRequest;
 import com.example.liskovbackend.dto.checklist.request.ChecklistUpdateRequest;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChecklistController {
     private final ChecklistService checklistService;
+    private final UserUtils userUtils;
 
     // 체크리스트 자동 생성
     @PostMapping("/generate")
@@ -40,19 +42,22 @@ public class ChecklistController {
     // 체크리스트 전체 조회
     @GetMapping
     public ResponseEntity<ApiResponse<List<AllChecklistGetResponse>>> getAllChecklist() {
-        return ApiResponse.ok(checklistService.getAllChecklist());
+        var userId = userUtils.getCurrentUserId();
+        return ApiResponse.ok(checklistService.getAllChecklist(userId));
     }
 
     // 체크리스트 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteChecklist(@PathVariable Long id) {
-        checklistService.deleteChecklist(id);
+        var userId = userUtils.getCurrentUserId();
+        checklistService.deleteChecklist(id, userId);
         return ApiResponse.ok("체크리스트가 삭제되었습니다.");
     }
 
     // 체크리스트 수정
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<ChecklistUpdateResponse>> updateChecklist(@PathVariable Long id, @Valid @RequestBody List<ChecklistUpdateRequest> request) {
-        return ApiResponse.ok(checklistService.updateChecklist(id, request));
+        var userId = userUtils.getCurrentUserId();
+        return ApiResponse.ok(checklistService.updateChecklist(id, request, userId));
     }
 }
