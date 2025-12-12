@@ -23,8 +23,11 @@ public class PropertyDetail {
     private Integer floor;
     private Integer builtYear;
     private BigDecimal area;
+    private Integer marketPrice;
+    private String leaseType;
     private Integer deposit;
     private Integer monthlyRent;
+    private String memo;
     private LocalDateTime createdAt;
 
     public static PropertyDetail from(Property property) {
@@ -36,8 +39,11 @@ public class PropertyDetail {
             .floor(property.getFloor())
             .builtYear(property.getBuiltYear())
             .area(property.getArea())
+            .marketPrice(property.getMarketPrice())
+            .leaseType(property.getLeaseType().toString())
             .deposit(property.getDeposit())
             .monthlyRent(property.getMonthlyRent())
+            .memo(property.getMemo())
             .createdAt(property.getCreatedAt())
             .build();
     }

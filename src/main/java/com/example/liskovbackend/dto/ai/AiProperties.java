@@ -1,4 +1,4 @@
-package com.example.liskovbackend.dto.properties;
+package com.example.liskovbackend.dto.ai;
 
 import lombok.Getter;
 import lombok.Setter;
