@@ -33,7 +33,7 @@ jobs:
             git pull
 
             echo "[4] Build"
-            ./gradlew clean build -x test
+            gradle clean build -x test
 
             echo "[5] Restart JAR"
             sudo nohup java -jar build/libs/liskov-backend-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
