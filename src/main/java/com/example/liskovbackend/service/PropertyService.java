@@ -64,6 +64,7 @@ public class PropertyService {
             .monthlyRent(request.getMonthlyRent())
             .marketPrice(request.getMarketPrice())
             .leaseType(LeaseType.valueOf(request.getLeaseType()))
+            .memo(request.getMemo())
             .user(user)
             .build();
 

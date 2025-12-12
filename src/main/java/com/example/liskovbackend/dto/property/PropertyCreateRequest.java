@@ -21,4 +21,5 @@ public class PropertyCreateRequest {
     private String leaseType;
     private Integer deposit;
     private Integer monthlyRent;
+    private String memo;
 }

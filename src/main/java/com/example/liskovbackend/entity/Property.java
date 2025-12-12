@@ -24,17 +24,20 @@ public class Property {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
     private String name;
-    
+
+    @Column(nullable = false)
     private String address;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "property_type", nullable = false)
     private PropertyType propertyType;
 
+    @Column(nullable = false)
     private Integer floor;
 
-    @Column(name = "built_year")
+    @Column(name = "built_year", nullable = false)
     private Integer builtYear;
 
     // 면적(단위: 평)
@@ -42,18 +45,23 @@ public class Property {
     private BigDecimal area;
 
     // 시세
-    @Column(name = "market_price")
+    @Column(name = "market_price", nullable = false)
     private Integer marketPrice;
 
     // 임대 종류
+    @Column(name = "lease_type", nullable = false)
     private LeaseType leaseType;
 
     // 보증금(=전세)
+    @Column(nullable = false)
     private Integer deposit;
 
     // 월세, 전세일 경우 0
     @Column(name = "monthly_rent")
     private Integer monthlyRent;
+
+    @Column(nullable = false)
+    private String memo;
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
