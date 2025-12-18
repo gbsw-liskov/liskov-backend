@@ -5,5 +5,5 @@ import java.util.List;
 
 public record ChecklistSaveRequest(
     @NotNull Long propertyId,
-    @NotNull List<String> contents
+    @NotNull List<ChecklistItemsSaveRequest> items
 ) {}
