@@ -7,6 +7,7 @@ import com.example.liskovbackend.dto.checklist.response.*;
 import com.example.liskovbackend.dto.gpt.request.GptChecklistGenerateRequest;
 import com.example.liskovbackend.entity.Checklist;
 import com.example.liskovbackend.entity.ChecklistItem;
+import com.example.liskovbackend.entity.Severity;
 import com.example.liskovbackend.global.exception.AiNoResponseException;
 import com.example.liskovbackend.global.exception.ResourceAlreadyExistsException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
@@ -78,7 +79,8 @@ public class ChecklistService {
                 .map(itemDto -> ChecklistItem.builder()
                         .checklist(checklist)
                         .content(itemDto.content())
-                        .severity(itemDto.severity())
+                        .severity(Severity.valueOf(itemDto.severity()))
+                        .memo(itemDto.memo())
                         .build())
                 .collect(Collectors.toList());
 

@@ -5,5 +5,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record ChecklistItemsSaveRequest(
     @NotNull String content,
-    @NotNull Severity severity
+    String severity,
+    String memo
 ) {}
