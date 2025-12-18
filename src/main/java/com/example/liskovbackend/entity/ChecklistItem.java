@@ -2,12 +2,19 @@ package com.example.liskovbackend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "checklist_items")
 @Getter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@SQLRestriction("is_deleted = false")
+@EntityListeners(AuditingEntityListener.class)
 public class ChecklistItem {
 
     @Id
@@ -27,7 +34,8 @@ public class ChecklistItem {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Severity severity;
+    @Builder.Default
+    private Severity severity = Severity.NONE;
 
     private String memo;
 
@@ -39,18 +47,6 @@ public class ChecklistItem {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    public void prePersist() {
-        severity = Severity.NONE;
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 
     public void updateMemo(String memo) {
         this.memo = memo;
