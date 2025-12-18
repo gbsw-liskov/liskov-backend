@@ -78,7 +78,6 @@ public class ChecklistService {
                 .map(itemDto -> ChecklistItem.builder()
                         .checklist(checklist)
                         .content(itemDto.content())
-                        .severity(itemDto.severity())
                         .build())
                 .collect(Collectors.toList());
 
