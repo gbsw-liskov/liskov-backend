@@ -72,14 +72,14 @@ public class ChecklistService {
                 .items(null)
                 .build();
 
-        var itemsDto = request.items();
+        var contents = request.contents();
 
-        var savedChecklistItems = itemsDto.stream()
-                .map(itemDto -> ChecklistItem.builder()
+        var savedChecklistItems = contents.stream()
+                .map(content -> ChecklistItem.builder()
                         .checklist(checklist)
-                        .content(itemDto.content())
+                        .content(content)
                         .build())
-                .collect(Collectors.toList());
+                .toList();
 
         checklistItemRepository.saveAll(savedChecklistItems);
 
