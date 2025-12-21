@@ -11,21 +11,21 @@ public class LoanRequest {
     @NotNull
     private boolean isHouseholder;
     @NotNull
-    private FamilyType familyType;
+    private String familyType;
     @NotNull
     private Integer annualSalary;
     @NotNull
     private Integer monthlySalary;
     @NotNull
-    private IncomeType incomeType;
+    private String incomeType;
     @NotNull
-    private IncomeCategory incomeCategory;
+    private String incomeCategory;
     @NotNull
     private String rentalArea;
     @NotNull
-    private HouseType houseType;
+    private String houseType;
     @NotNull
-    private RentalType rentalType;
+    private String rentalType;
     @NotNull
     private Integer deposit;
     @NotNull
@@ -35,12 +35,12 @@ public class LoanRequest {
     @NotNull
     private Integer creditRating;
     @NotNull
-    private LoanType loanType;
+    private String loanType;
     @NotNull
     private boolean overdueRecord;
     @NotNull
     private boolean hasLeaseAgreement;
     @NotNull
-    private Confirmed confirmed;
+    private String confirmed;
 
 }

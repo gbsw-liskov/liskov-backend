@@ -50,13 +50,14 @@ public class ChecklistService {
                 .area(property.getArea())
                 .build();
 
-        var response = gptOssService.generateChecklist(gptRequest);
+        var result = gptOssService.generateChecklist(gptRequest).block();
 
-        if (response == null || response.block() == null) {
+        if (result == null) {
             throw new AiNoResponseException("체크리스트가 생성되지 않았습니다.");
         }
 
-        return response.block();
+        return result;
+
     }
 
     @Transactional
