@@ -68,12 +68,12 @@ public class SolutionService {
             .details(detailDto)
             .build();
 
-        var response = gptOssService.generateSolution(gptRequest);
-        if (response == null || response.block() == null) {
+        var response = gptOssService.generateSolution(gptRequest).block();
+        if (response == null) {
             throw new AiNoResponseException("대처방안이 생성되지 않았습니다.");
         }
 
-        return response.block();
+        return response;
     }
 
     @Transactional(readOnly = true)

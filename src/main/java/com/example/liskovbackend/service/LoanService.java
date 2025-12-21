@@ -16,12 +16,12 @@ public class LoanService {
 
     @Transactional
     public LoanResponse generateLoanGuide(LoanRequest loanRequest) {
-        var responseMono = gptOssService.generateLoanGuide(loanRequest);
+        var responseMono = gptOssService.generateLoanGuide(loanRequest).block();
 
-        if (responseMono == null || responseMono.block() == null) {
+        if (responseMono == null) {
             throw new AiNoResponseException("대출 가이드가 생성되지 않았습니다.");
         }
 
-        return responseMono.block();
+        return responseMono;
     }
 }

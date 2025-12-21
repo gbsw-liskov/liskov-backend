@@ -1,9 +1,11 @@
 package com.example.liskovbackend.dto.loan.response;
 
 import lombok.Builder;
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 @Builder
 public class LoanResponse {
     private Integer loanAmount;

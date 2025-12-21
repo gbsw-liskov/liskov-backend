@@ -1,5 +1,6 @@
 package com.example.liskovbackend.dto.loan.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -9,6 +10,7 @@ public class LoanRequest {
     @NotNull
     private Integer age;
     @NotNull
+    @JsonProperty("isHouseholder")
     private boolean isHouseholder;
     @NotNull
     private String familyType;
