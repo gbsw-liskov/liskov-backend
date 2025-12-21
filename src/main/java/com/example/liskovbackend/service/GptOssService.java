@@ -31,20 +31,22 @@ public class GptOssService {
         return webClient.post()
                 .uri(CHECKLIST_ENDPOINT)
                 .bodyValue(gptRequest)
-                .retrieve()
-                .onStatus(
-                        status -> status.is4xxClientError() || status.is5xxServerError(),
-                        clientResponse -> clientResponse.bodyToMono(String.class)
-                                .defaultIfEmpty("(응답 바디 없음)")
-                                .flatMap(errorBody -> {
-                                    var message = "AI 호출 실패 ("
-                                            + clientResponse.statusCode() + ") : "
-                                            + errorBody;
+                .exchangeToMono(response -> {
+                    if (response.statusCode().is2xxSuccessful()) {
+                        return response.bodyToMono(ChecklistGenerateResponse.class)
+                                .switchIfEmpty(Mono.error(
+                                        new AiNoResponseException("AI 응답 바디가 비어 있습니다.")
+                                ));
+                    }
+                    return response.bodyToMono(String.class)
+                            .defaultIfEmpty("(응답 바디 없음)")
+                            .flatMap(body ->
+                                    Mono.error(new AiNoResponseException(
+                                            "AI 호출 실패 (" + response.statusCode() + ") : " + body
+                                    ))
+                            );
+                });
 
-                                    return Mono.error(new AiNoResponseException(message));
-                                })
-                )
-                .bodyToMono(ChecklistGenerateResponse.class);
     }
 
 
@@ -56,19 +58,36 @@ public class GptOssService {
             .retrieve()
             .onStatus(
                 status -> status.is4xxClientError() || status.is5xxServerError(),
-                clientResponse -> Mono.error(new AiNoResponseException("AI를 호출에 실패하였습니다. : " + clientResponse.statusCode()))
+                    clientResponse -> clientResponse.bodyToMono(String.class)
+                            .defaultIfEmpty("(응답 바디 없음)")
+                            .flatMap(errorBody -> {
+                                var message = "AI 호출 실패 ("
+                                        + clientResponse.statusCode() + ") : "
+                                        + errorBody;
+
+                                return Mono.error(new AiNoResponseException(message));
+                            })
             )
             .bodyToMono(SolutionDetailResponse.class);
     }
 
     public Mono<LoanResponse> generateLoanGuide(LoanRequest loanRequest) {
+        System.out.println(loanRequest);
         return webClient.post()
             .uri(LOAN_ENDPOINT)
             .bodyValue(loanRequest)
             .retrieve()
             .onStatus(
                 status -> status.is4xxClientError() || status.is5xxServerError(),
-                clientResponse -> Mono.error(new AiNoResponseException("AI를 호출에 실패하였습니다. : " + clientResponse.statusCode()))
+                    clientResponse -> clientResponse.bodyToMono(String.class)
+                            .defaultIfEmpty("(응답 바디 없음)")
+                            .flatMap(errorBody -> {
+                                var message = "AI 호출 실패 ("
+                                        + clientResponse.statusCode() + ") : "
+                                        + errorBody;
+
+                                return Mono.error(new AiNoResponseException(message));
+                            })
             )
             .bodyToMono(LoanResponse.class);
     }
