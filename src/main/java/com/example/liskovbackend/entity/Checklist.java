@@ -8,6 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -40,14 +41,22 @@ public class Checklist {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "checklist", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "checklist",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true)
     private List<ChecklistItem> items;
 
     public void delete() {
         isDeleted = true;
     }
 
-    public void updateItems(List<ChecklistItem> savedChecklistItems) {
-        this.items = savedChecklistItems;
+    public void addItem(ChecklistItem item) {
+        items.add(item);
+        item.setChecklist(this);
+    }
+
+    public void removeItem(ChecklistItem item) {
+        items.remove(item);
+        item.setChecklist(null);
     }
 }
