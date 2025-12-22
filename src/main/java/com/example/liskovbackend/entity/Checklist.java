@@ -24,12 +24,9 @@ public class Checklist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id", nullable = false)
     private Property property;
-
-//    @Column(columnDefinition = "TEXT")
-//    private String description;
 
     @Column(name = "is_deleted", nullable = false)
     @Builder.Default
