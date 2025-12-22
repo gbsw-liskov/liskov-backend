@@ -57,7 +57,6 @@ public class ChecklistService {
         }
 
         return result;
-
     }
 
     @Transactional
@@ -65,9 +64,9 @@ public class ChecklistService {
         var property = propertyRepository.findById(request.propertyId())
                 .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
 
-        if (property.getChecklists() != null) {
+        checklistRepository.findByPropertyId(property.getId()).ifPresent(existingChecklist -> {
             throw new ResourceAlreadyExistsException("매물에 대한 체크리스트가 이미 존재합니다.");
-        }
+        });
 
         var checklist = Checklist.builder()
                 .property(property)

@@ -80,9 +80,6 @@ public class Property {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "property", cascade = CascadeType.PERSIST)
-    private List<Checklist> checklists;
-
     @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
     private Analysis analysis;
 
