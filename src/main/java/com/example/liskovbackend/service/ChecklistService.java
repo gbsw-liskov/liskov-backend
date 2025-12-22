@@ -62,40 +62,36 @@ public class ChecklistService {
     @Transactional
     public ChecklistSaveResponse saveChecklist(ChecklistSaveRequest request) {
         var property = propertyRepository.findById(request.propertyId())
-                .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
+            .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
 
-        checklistRepository.findByPropertyId(property.getId()).ifPresent(existingChecklist -> {
+        checklistRepository.findByPropertyId(property.getId()).ifPresent(it -> {
             throw new ResourceAlreadyExistsException("매물에 대한 체크리스트가 이미 존재합니다.");
         });
 
         var checklist = Checklist.builder()
-                .property(property)
-                .items(null)
-                .build();
+            .property(property)
+            .build();
 
-        var itemsDto = request.items();
+        request.items().forEach(itemDto ->
+            checklist.addItem(
+                ChecklistItem.builder()
+                    .content(itemDto.content())
+                    .severity(Severity.valueOf(itemDto.severity()))
+                    .memo(itemDto.memo())
+                    .build()
+            )
+        );
 
-        var savedChecklistItems = itemsDto.stream()
-                .map(itemDto -> ChecklistItem.builder()
-                        .checklist(checklist)
-                        .content(itemDto.content())
-                        .severity(Severity.valueOf(itemDto.severity()))
-                        .memo(itemDto.memo())
-                        .build())
-                .collect(Collectors.toList());
-
-        checklistItemRepository.saveAll(savedChecklistItems);
-
-        checklist.updateItems(savedChecklistItems);
-        Checklist savedChecklist = checklistRepository.save(checklist);
+        var savedChecklist = checklistRepository.save(checklist);
 
         return ChecklistSaveResponse.builder()
-                .checklistId(savedChecklist.getId())
-                .propertyId(property.getId())
-                .itemCount(savedChecklistItems.size())
-                .createdAt(savedChecklist.getCreatedAt())
-                .build();
+            .checklistId(savedChecklist.getId())
+            .propertyId(property.getId())
+            .itemCount(savedChecklist.getItems().size())
+            .createdAt(savedChecklist.getCreatedAt())
+            .build();
     }
+
 
     @Transactional(readOnly = true)
     public ChecklistGetResponse getChecklistById(Long id) {
@@ -144,9 +140,10 @@ public class ChecklistService {
         var checklist = checklistRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다."));
 
-        if(checklist.getProperty().getUser().getId().equals(userId)){
+        if (!checklist.getProperty().getUser().getId().equals(userId)) {
             throw new ResourceNotFoundException("체크리스트가 존재하지 않습니다.");
         }
+        
         checklist.delete();
     }
 
@@ -155,7 +152,7 @@ public class ChecklistService {
         var checklist = checklistRepository.findByIdAndIsDeletedFalse(checklistId)
                 .orElseThrow(() -> new ResourceNotFoundException("체크리스트가 존재하지 않습니다"));
 
-        if(checklist.getProperty().getUser().getId().equals(userId)){
+        if (!checklist.getProperty().getUser().getId().equals(userId)) {
             throw new ResourceNotFoundException("체크리스트가 존재하지 않습니다.");
         }
 
