@@ -15,6 +15,7 @@ import com.example.liskovbackend.repository.ChecklistItemRepository;
 import com.example.liskovbackend.repository.ChecklistRepository;
 import com.example.liskovbackend.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
@@ -27,6 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ChecklistService {
 
@@ -61,28 +63,53 @@ public class ChecklistService {
 
     @Transactional
     public ChecklistSaveResponse saveChecklist(ChecklistSaveRequest request) {
+        log.info("[ChecklistSave] START request={}", request);
+
+        log.info("[ChecklistSave] propertyId={}", request.propertyId());
+
         var property = propertyRepository.findById(request.propertyId())
-            .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));
+            .orElseThrow(() -> {
+                log.error("[ChecklistSave] Property NOT FOUND propertyId={}", request.propertyId());
+                return new ResourceNotFoundException("매물을 찾을 수 없습니다.");
+            });
+
+        log.info("[ChecklistSave] Property FOUND id={}", property.getId());
 
         checklistRepository.findByPropertyId(property.getId()).ifPresent(it -> {
+            log.error("[ChecklistSave] Checklist already exists propertyId={}, checklistId={}",
+                property.getId(), it.getId());
             throw new ResourceAlreadyExistsException("매물에 대한 체크리스트가 이미 존재합니다.");
         });
+
+        log.info("[ChecklistSave] No existing checklist for propertyId={}", property.getId());
 
         var checklist = Checklist.builder()
             .property(property)
             .build();
 
-        request.items().forEach(itemDto ->
+        log.info("[ChecklistSave] Checklist entity created (not saved)");
+
+        request.items().forEach(itemDto -> {
+            log.info("[ChecklistSave] Adding item content={}, severity={}, memo={}",
+                itemDto.content(), itemDto.severity(), itemDto.memo());
+
             checklist.addItem(
                 ChecklistItem.builder()
                     .content(itemDto.content())
                     .severity(Severity.valueOf(itemDto.severity()))
                     .memo(itemDto.memo())
                     .build()
-            )
-        );
+            );
+        });
+
+        log.info("[ChecklistSave] Total items added={}", checklist.getItems().size());
 
         var savedChecklist = checklistRepository.save(checklist);
+
+        log.info("[ChecklistSave] Checklist SAVED checklistId={}", savedChecklist.getId());
+
+        log.info("[ChecklistSave] END checklistId={}, itemCount={}",
+            savedChecklist.getId(), savedChecklist.getItems().size());
 
         return ChecklistSaveResponse.builder()
             .checklistId(savedChecklist.getId())
@@ -91,7 +118,6 @@ public class ChecklistService {
             .createdAt(savedChecklist.getCreatedAt())
             .build();
     }
-
 
     @Transactional(readOnly = true)
     public ChecklistGetResponse getChecklistById(Long id) {
@@ -143,7 +169,7 @@ public class ChecklistService {
         if (!checklist.getProperty().getUser().getId().equals(userId)) {
             throw new ResourceNotFoundException("체크리스트가 존재하지 않습니다.");
         }
-        
+
         checklist.delete();
     }
 
