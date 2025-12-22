@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -33,7 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
         throws ServletException, IOException {
 
         var authHeader = request.getHeader("Authorization");
@@ -54,15 +58,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     null,
                     List.of()
                 );
-                auth.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request)
-                );
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
+
         } catch (JwtException e) {
+            log.error("JWT 검증 실패", e);
             SecurityContextHolder.clearContext();
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
         filterChain.doFilter(request, response);
     }
+
 }
