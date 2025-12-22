@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -53,16 +54,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             var userId = jwtUtils.extractUserId(token);
 
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                var role = jwtUtils.extractRole(token);
+
+                var authorities = List.of(new SimpleGrantedAuthority(role));
+
                 var auth = new UsernamePasswordAuthenticationToken(
                     userId,
                     null,
-                    List.of()
+                    authorities
                 );
+
                 SecurityContextHolder.getContext().setAuthentication(auth);
+
             }
 
         } catch (JwtException e) {
-            log.error("JWT 검증 실패", e);
             SecurityContextHolder.clearContext();
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;

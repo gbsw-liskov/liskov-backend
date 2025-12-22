@@ -47,6 +47,7 @@ public class JwtUtils {
     private String generateToken(User user, long expiration) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
+        claims.put("role", "ROLE_USER");
 
         return Jwts.builder()
             .claims(claims)
@@ -100,6 +101,10 @@ public class JwtUtils {
     public boolean validateRefreshToken(String userId, String refreshToken) {
         var stored = refreshTokenStore.get(userId);
         return stored != null && stored.equals(refreshToken) && validateToken(refreshToken);
+    }
+
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
     public void invalidateRefreshToken(String userId) {
