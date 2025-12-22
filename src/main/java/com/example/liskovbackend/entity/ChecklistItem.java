@@ -44,6 +44,10 @@ public class ChecklistItem {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
+
     public void updateMemo(String memo) {
         this.memo = memo;
     }
