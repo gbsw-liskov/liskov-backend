@@ -72,7 +72,6 @@ public class GptOssService {
     }
 
     public Mono<LoanResponse> generateLoanGuide(LoanRequest loanRequest) {
-        System.out.println(loanRequest);
         return webClient.post()
             .uri(LOAN_ENDPOINT)
             .bodyValue(loanRequest)
