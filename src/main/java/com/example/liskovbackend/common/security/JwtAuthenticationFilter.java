@@ -1,6 +1,7 @@
 package com.example.liskovbackend.common.security;
 
 import com.example.liskovbackend.repository.UserRepository;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -42,14 +44,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         var token = authHeader.substring(7);
-        var userId = jwtUtils.extractUserId(token);
 
-        if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            if (jwtUtils.validateToken(token)) {
-                var authentication = new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            var userId = jwtUtils.extractUserId(token);
+
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                var auth = new UsernamePasswordAuthenticationToken(
+                    userId,
+                    null,
+                    List.of()
+                );
+                auth.setDetails(
+                    new WebAuthenticationDetailsSource().buildDetails(request)
+                );
+                SecurityContextHolder.getContext().setAuthentication(auth);
             }
+        } catch (JwtException e) {
+            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);
