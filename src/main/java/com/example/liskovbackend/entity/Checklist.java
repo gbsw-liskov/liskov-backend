@@ -44,7 +44,8 @@ public class Checklist {
     @OneToMany(mappedBy = "checklist",
         cascade = CascadeType.ALL,
         orphanRemoval = true)
-    private List<ChecklistItem> items;
+    @Builder.Default
+    private List<ChecklistItem> items = new ArrayList<>();
 
     public void delete() {
         isDeleted = true;
