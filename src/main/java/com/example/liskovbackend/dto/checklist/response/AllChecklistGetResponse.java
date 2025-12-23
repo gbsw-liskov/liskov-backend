@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 @Builder
 public record AllChecklistGetResponse(
     Long checklistId,
+    String name,
     Long propertyId,
     LocalDateTime createdAt,
     Integer itemCount

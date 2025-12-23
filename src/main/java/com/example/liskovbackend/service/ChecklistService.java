@@ -155,6 +155,7 @@ public class ChecklistService {
                 .map(checklist -> AllChecklistGetResponse.builder()
                         .checklistId(checklist.getId())
                         .propertyId(checklist.getProperty().getId())
+                        .name(checklist.getProperty().getName())
                         .createdAt(checklist.getCreatedAt())
                         .itemCount(checklist.getItems().size())
                         .build()
