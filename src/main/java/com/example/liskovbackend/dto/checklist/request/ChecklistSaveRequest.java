@@ -4,6 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public record ChecklistSaveRequest(
-    @NotNull Long propertyId,
-    @NotNull List<ChecklistItemsSaveRequest> items
+    Long propertyId,
+    List<ChecklistItemsSaveRequest> items
 ) {}

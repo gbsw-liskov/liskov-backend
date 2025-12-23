@@ -29,7 +29,7 @@ public class ChecklistController {
 
     // 체크리스트 저장
     @PostMapping
-    public ResponseEntity<ApiResponse<ChecklistSaveResponse>> saveChecklist(@Valid @RequestBody ChecklistSaveRequest request) {
+    public ResponseEntity<ApiResponse<ChecklistSaveResponse>> saveChecklist(@RequestBody ChecklistSaveRequest request) {
         return ApiResponse.ok(checklistService.saveChecklist(request));
     }
 
