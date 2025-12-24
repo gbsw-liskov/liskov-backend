@@ -11,9 +11,10 @@ public record AiAnalyzeRequest(
     Integer builtYear,
     Double area,
 
-    Double marketPrice,
-    Double deposit,
-    Double monthlyRent,
+    Integer marketPrice,
+    String leaseType,
+    Integer deposit,
+    Integer monthlyRent,
 
     List<FileData> files
 ) {
