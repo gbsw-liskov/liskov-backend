@@ -13,10 +13,17 @@ import com.example.liskovbackend.global.exception.ExternalServiceException;
 import com.example.liskovbackend.global.exception.ResourceNotFoundException;
 import com.example.liskovbackend.repository.AnalysisRepository;
 import com.example.liskovbackend.repository.PropertyRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,11 +54,7 @@ public class AnalysisService {
 
         var aiRequest = makeAiRequest(property, request, files);
 
-        var aiResponse = restTemplate.postForObject(
-            aiUrl + ANALYSIS_ENDPOINT,
-            aiRequest,
-            AiAnalyzeResponse.class
-        );
+        var aiResponse = sendMultipartToAi(aiRequest, files);
 
         if (aiResponse == null) {
             throw new AiNoResponseException("AI 서버가 응답할 수 없습니다.");
@@ -69,6 +72,52 @@ public class AnalysisService {
 
         return convertToResponse(analysis);
     }
+
+    private AiAnalyzeResponse sendMultipartToAi(
+        AiAnalyzeRequest aiRequest,
+        List<MultipartFile> files
+    ) {
+        try {
+            var objectMapper = new ObjectMapper();
+            var json = objectMapper.writeValueAsString(aiRequest);
+
+            var body = new LinkedMultiValueMap<String, Object>();
+
+            // JSON part
+            var jsonHeaders = new HttpHeaders();
+            jsonHeaders.setContentType(MediaType.APPLICATION_JSON);
+            body.add("data", new HttpEntity<>(json, jsonHeaders));
+
+            // file parts
+            for (MultipartFile file : files) {
+                body.add(
+                    "files",
+                    new ByteArrayResource(file.getBytes()) {
+                        @Override
+                        public String getFilename() {
+                            return file.getOriginalFilename();
+                        }
+                    }
+                );
+            }
+
+            var headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+            HttpEntity<MultiValueMap<String, Object>> entity =
+                new HttpEntity<>(body, headers);
+
+            return restTemplate.postForObject(
+                aiUrl + ANALYSIS_ENDPOINT,
+                entity,
+                AiAnalyzeResponse.class
+            );
+
+        } catch (Exception e) {
+            throw new ExternalServiceException("AI 서버 요청 실패");
+        }
+    }
+
 
     private AiAnalyzeRequest makeAiRequest(Property p, AnalyzeRequest req, List<MultipartFile> files) {
 
