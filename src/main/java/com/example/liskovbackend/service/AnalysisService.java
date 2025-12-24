@@ -133,9 +133,10 @@ public class AnalysisService {
             p.getFloor(),
             p.getBuiltYear(),
             p.getArea().doubleValue(),
-            req.marketPrice(),
-            req.deposit(),
-            req.monthlyRent(),
+            p.getMarketPrice(),
+            p.getLeaseType().toString(),
+            p.getDeposit(),
+            p.getMonthlyRent(),
             fileData
         );
     }
