@@ -8,5 +8,6 @@ import java.util.List;
 public record ChecklistGetResponse(
     Long checklistId,
     Long propertyId,
+    String name,
     List<ChecklistItemGetResponse> items
 ) {}

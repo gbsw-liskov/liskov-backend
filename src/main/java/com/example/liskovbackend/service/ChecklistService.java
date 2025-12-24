@@ -141,6 +141,7 @@ public class ChecklistService {
         return ChecklistGetResponse.builder()
                 .checklistId(checklist.getId())
                 .propertyId(checklist.getProperty().getId())
+                .name(checklist.getProperty().getName())
                 .items(items)
                 .build();
     }
