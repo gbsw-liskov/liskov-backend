@@ -40,6 +40,9 @@ public class AnalysisService {
     private String aiUrl;
 
     public AnalyzeResponse analyze(AnalyzeRequest request, List<MultipartFile> files) {
+        if (analysisRepository.existsByPropertyId(request.propertyId())) {
+            throw new ResourceAlreadyExistsException("이미 분석된 매물입니다.");
+        }
 
         if (files == null || files.isEmpty()) {
             throw new IllegalArgumentException("파일은 최소 1개 이상 필요합니다.");
