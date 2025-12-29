@@ -14,7 +14,6 @@ public class LoanService {
 
     private final GptOssService gptOssService;
 
-    @Transactional
     public LoanResponse generateLoanGuide(LoanRequest loanRequest) {
         var responseMono = gptOssService.generateLoanGuide(loanRequest).block();
 

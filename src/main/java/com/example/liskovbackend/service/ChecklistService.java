@@ -37,7 +37,6 @@ public class ChecklistService {
     private final ChecklistItemRepository checklistItemRepository;
     private final GptOssService gptOssService;
 
-    @Transactional
     public ChecklistGenerateResponse generateChecklist(ChecklistGenerateRequest request) {
         var property = propertyRepository.findById(request.propertyId())
                 .orElseThrow(() -> new ResourceNotFoundException("매물을 찾을 수 없습니다."));

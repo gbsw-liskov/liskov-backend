@@ -30,7 +30,6 @@ public class SolutionService {
     private final AnalysisRepository analysisRepository;
     private final GptOssService gptOssService;
 
-    @Transactional
     public SolutionDetailResponse generateSolution(SolutionGenerateRequest request) {
         var property = propertyRepository.findById(request.getPropertyId())
             .orElseThrow(() -> new ResourceNotFoundException("매물이 존재하지 않습니다."));
